@@ -40,10 +40,11 @@ func _ready():
 	songTimer.wait_time = songLength / 1000 
 	songTimer.start()
 	#place_obects(metadata["HitObjects"])
+	print(metadata["HitObjects"].size())
 
 func _physics_process(delta):
 	#print(songTimer.time_left)
-	if index > metadata["HitObjects"].size():
+	if index >= metadata["HitObjects"].size():
 		print("Stop")
 		return
 		
