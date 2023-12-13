@@ -21,7 +21,7 @@ var metadata : Dictionary = {
 }
 var timeElapsed : float = 0.0
 var index = 0
-
+var circleSize : float
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -29,9 +29,8 @@ func _ready():
 	var mp3 : AudioStream = beatmaps[i].mp3
 	var beatmap = beatmaps[i].beatmap
 	read_osu_file(beatmap)
-	
+	circleSize = float(metadata["Difficulty"]["CircleSize"])
 	#print(metadata["Difficulty"])
-	
 	set_audio_stream(mp3)
 	audio.play()
 	# Get the song length in ms
@@ -51,7 +50,7 @@ func _physics_process(delta):
 	timeElapsed += delta
 	var timeMS = int(timeElapsed * 1000)
 	var threshold = 15 # threshold of 15 ms
-	var timeDifference = abs(timeMS - metadata["HitObjects"][index]["time"].to_int())
+	var timeDifference = abs(timeMS - metadata["HitObjects"][index]["time"])
 	
 	if timeDifference <= threshold:
 		place_single_object(metadata["HitObjects"][index])
@@ -73,44 +72,127 @@ func set_song_length() -> int:
 func read_osu_file(beatmap: String) -> void:
 	var file = FileAccess.open(beatmap, FileAccess.READ)
 	var text = file.get_as_text()
-	var current_metadata : String = ""
+	var currentMetadata : String = ""
 	
 	while not file.eof_reached():
 		var line = file.get_line()
 
 		if "[General]" in line:
-			current_metadata = line
+			currentMetadata = line
 		if "[Metadata]" in line:
-			current_metadata = line
+			currentMetadata = line
 		if "[Difficulty]" in line:
-			current_metadata = line
+			currentMetadata = line
 		if "[HitObjects]" in line:
-			current_metadata = line
+			currentMetadata = line
 		
-		match current_metadata:
+		match currentMetadata:
 			"[General]":
-				var key_value = line.split(':')
-				if len(key_value) == 2:
-					metadata["General"][key_value[0]] = key_value[1]
+				var keyValue = line.split(':')
+				if len(keyValue) == 2:
+					metadata["General"][keyValue[0]] = keyValue[1]
 			"[Metadata]":
-				var key_value = line.split(':')
-				if len(key_value) == 2:
-					metadata["Metadata"][key_value[0]] = key_value[1]
+				var keyValue = line.split(':')
+				if len(keyValue) == 2:
+					metadata["Metadata"][keyValue[0]] = keyValue[1]
 			"[Difficulty]":
-				var key_value = line.split(':')
-				if len(key_value) == 2:
-					metadata["Difficulty"][key_value[0]] = key_value[1]
+				var keyValue = line.split(':')
+				if len(keyValue) == 2:
+					metadata["Difficulty"][keyValue[0]] = keyValue[1]
 			"[HitObjects]":
-				var raw_data = line.split(',')
-				if len(raw_data) >= 4:
+				var rawData = line.split(',')
+				
+				if len(rawData) >= 4:
 					var data = {
-							'x'     : raw_data[0],
-							'y'     : raw_data[1],
-							'time'  : raw_data[2],
-							'type'  : raw_data[3],
+							'x'     : rawData[0].to_int(),
+							'y'     : rawData[1].to_int(),
+							'time'  : rawData[2].to_int(),
+							'type'  : rawData[3].to_int(),
 						}
+					if data["type"] & 2: # Check if the second bit is set. This is for slider
+						var sliderPoints = rawData[5]
+						var rawSliderPoints = sliderPoints.split("|")
+						data["sliderReverses"] = rawData[6].to_int()
+						data["sliderLength"] = rawData[7].to_float()
+						
+						data["sliderData"] = analyze_slider({
+							"x" : data["x"],
+							"y" : data["y"],
+							"time" : data["time"],
+							"type" : data["type"],
+							"sliderPoints" : rawSliderPoints,
+							"sliderReverses" : data["sliderReverses"],
+							"sliderLength" : data["sliderLength"]
+						})
+
 					metadata["HitObjects"].append(data)
 	file.close()
+
+
+
+func analyze_slider(note: Dictionary) -> Dictionary:
+	if note["type"] & 2 == 0:
+		print("Error in analyzeSlider at " + note.time + ": Not a slider")
+		return {}
+	
+	var pts = note["sliderPoints"]
+	var sliderType = pts[0]
+	
+	if pts.size() == 2:
+		sliderType = "L"
+	
+	match sliderType:
+		"L", "C":
+			return {
+				"type" : sliderType,
+				"points" : get_linear_point(pts)
+			}
+		"B":
+			return {
+				"type" : sliderType,
+				"points" : get_bezier_points(pts)
+			}
+		"P":
+			return {
+				"type" : sliderType,
+				"points" : get_path_points(pts)
+			}
+		_:
+			return {}
+
+	
+## Returns the end point of a linear slider
+func get_linear_point(pts: Array[String]) -> Vector2:
+	return get_vector(pts[1])
+
+## Returns an array of points
+func get_path_points(pts: Array[String]) -> Array:
+	var arr = []
+	
+	for i in range(1, pts.size()):
+		arr.append(get_vector(pts[i]))
+	
+	return arr
+	
+## Returns an array of points without duplicates as bezier nature
+func get_bezier_points(pts: Array[String]) -> Array:
+	var arr = []
+	
+	for i in range(1, pts.size()):
+		var currPoint = get_vector(pts[i])
+		
+		if currPoint not in arr:
+			arr.append(currPoint)
+	
+	return arr
+
+## Returns a Vector2 from a string with format "x:y"
+func get_vector(point: String) -> Vector2:
+	var p = point.split(":")
+	var x = p[0].to_int()
+	var y = p[1].to_int()
+	
+	return Vector2(x, y)
 
 ## Places objects in the play area (scaled)
 func place_obects(hitObjects: Array) -> void:
@@ -120,19 +202,24 @@ func place_obects(hitObjects: Array) -> void:
 		break
 ## Places a single object in the play area (scaled)		
 func place_single_object(obj: Dictionary) -> void:
-	var x = obj["x"].to_int()
-	var y = obj["y"].to_int()
-	var time = obj["time"].to_int()
-	var type = obj["type"].to_int()
-	var scaled_xy = get_scale_coords(x, y)
+	var x = obj["x"]
+	var y = obj["y"]
+	var time = obj["time"]
+	var type = obj["type"]
+	var scaledXY = get_scale_coords(x, y)
 	
 	var note = Note.instantiate()
 	noteGroup.add_child(note)
 	note.timer.start()
-	note.global_position = scaled_xy
-	
-	var circleSize = float(metadata["Difficulty"]["CircleSize"])
+	note.global_position = scaledXY
 	note.scale = Vector2(circleSize, circleSize)
+	
+	if type == 2 or type == 6:
+		place_slider(obj)
+
+func place_slider(obj: Dictionary) -> void:
+	print(obj)
+	pass
 		
 ## Get scaled coordinates given an (x, y)
 func get_scale_coords(x: int, y: int) -> Vector2:
