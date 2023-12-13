@@ -1,10 +1,18 @@
-[gd_scene load_steps=2 format=3 uid="uid://c10nf1ln4qv1t"]
+[gd_scene load_steps=3 format=3 uid="uid://c10nf1ln4qv1t"]
 
+[ext_resource type="Script" path="res://Scripts/Note.gd" id="1_4ba4c"]
 [ext_resource type="Texture2D" uid="uid://ddtffajq42eas" path="res://icon.svg" id="1_42e2n"]
 
 [node name="Note" type="Node2D"]
 z_index = 10
+script = ExtResource("1_4ba4c")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 scale = Vector2(0.109375, 0.109375)
 texture = ExtResource("1_42e2n")
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 5.0
+one_shot = true
+
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]

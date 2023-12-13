@@ -7,6 +7,7 @@ class_name Main
 
 @onready var noteGroup = $NoteGroup
 @onready var audio : AudioStreamPlayer2D = $Audio
+@onready var songTimer : Timer = $SongTimer
 
 var path = "D:\\osu!\\Songs"
 var OGPlayArea : Vector2 = Vector2(512, 384)
@@ -18,7 +19,8 @@ var metadata : Dictionary = {
 	"Difficulty": {},
 	"HitObjects": [],
 }
-
+var timeElapsed : float = 0.0
+var index = 0
 
 
 # Called when the node enters the scene tree for the first time.
@@ -31,10 +33,29 @@ func _ready():
 	#print(metadata["Difficulty"])
 	
 	set_audio_stream(mp3)
+	audio.play()
+	# Get the song length in ms
 	songLength = set_song_length()
+	# Turn back timer to s from ms
+	songTimer.wait_time = songLength / 1000 
+	songTimer.start()
+	#place_obects(metadata["HitObjects"])
+
+func _physics_process(delta):
+	#print(songTimer.time_left)
+	if index > metadata["HitObjects"].size():
+		print("Stop")
+		return
+		
+	timeElapsed += delta
+	var timeMS = int(timeElapsed * 1000)
+	var threshold = 15 # threshold of 15 ms
+	var timeDifference = abs(timeMS - metadata["HitObjects"][index]["time"].to_int())
 	
+	if timeDifference <= threshold:
+		place_single_object(metadata["HitObjects"][index])
+		index += 1
 	
-	place_obects(metadata["HitObjects"])
 
 
 ## Set the AudioStreamPlayer's stream
@@ -93,27 +114,25 @@ func read_osu_file(beatmap: String) -> void:
 ## Places objects in the play area (scaled)
 func place_obects(hitObjects: Array) -> void:
 	for obj in hitObjects:
-		var x = obj["x"].to_int()
-		var y = obj["y"].to_int()
-		var time = obj["time"].to_int()
-		var type = obj["type"].to_int()
-		var scaled_xy = get_scale_coords(x, y)
+		place_single_object(obj)
 		
-		var note = Note.instantiate()
-		noteGroup.add_child(note)
-		note.global_position = scaled_xy
-		
-		var circleSize = float(metadata["Difficulty"]["CircleSize"])
-		note.scale = Vector2(circleSize, circleSize)
-		
-		
-		
+		break
+## Places a single object in the play area (scaled)		
+func place_single_object(obj: Dictionary) -> void:
+	var x = obj["x"].to_int()
+	var y = obj["y"].to_int()
+	var time = obj["time"].to_int()
+	var type = obj["type"].to_int()
+	var scaled_xy = get_scale_coords(x, y)
+	
+	var note = Note.instantiate()
+	noteGroup.add_child(note)
+	note.timer.start()
+	note.global_position = scaled_xy
+	
+	var circleSize = float(metadata["Difficulty"]["CircleSize"])
+	note.scale = Vector2(circleSize, circleSize)
 		
 ## Get scaled coordinates given an (x, y)
 func get_scale_coords(x: int, y: int) -> Vector2:
 	return Vector2(x + offset.x, y + offset.y)
-
-
-#func _process(_delta):
-	#var pos = get_viewport().get_mouse_position()
-	#print(pos)
