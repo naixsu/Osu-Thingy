@@ -1,12 +1,59 @@
-[gd_scene load_steps=3 format=3 uid="uid://bil3o66huds7t"]
+[gd_scene load_steps=4 format=3 uid="uid://bil3o66huds7t"]
 
 [ext_resource type="Script" path="res://Scripts/Main.gd" id="1_w7xk5"]
+[ext_resource type="PackedScene" uid="uid://c10nf1ln4qv1t" path="res://Scenes/Note.tscn" id="2_e5mop"]
 [ext_resource type="Resource" uid="uid://cnqlm8ja0tkay" path="res://Resources/Map1.tres" id="2_u5sfc"]
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_w7xk5")
+Note = ExtResource("2_e5mop")
 beatmaps = Array[Resource]([ExtResource("2_u5sfc")])
 
 [node name="Audio" type="AudioStreamPlayer2D" parent="."]
 
-[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+[node name="NoteGroup" type="Node2D" parent="."]
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+visible = false
+
+[node name="PlayArea" type="ColorRect" parent="CanvasLayer"]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -460.0
+offset_top = -290.0
+offset_right = 460.0
+offset_bottom = 290.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 4
+
+[node name="Panel" type="Panel" parent="CanvasLayer"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -460.0
+offset_top = -290.0
+offset_right = 460.0
+offset_bottom = 290.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PlayArea2" type="ColorRect" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 116.0
+offset_top = 34.0
+offset_right = 1036.0
+offset_bottom = 614.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 4

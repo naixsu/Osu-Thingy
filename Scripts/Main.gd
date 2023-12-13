@@ -1,11 +1,17 @@
 extends Node
+class_name Main
+
+@export var Note : PackedScene
 
 @export var beatmaps : Array[Resource]
 
-
+@onready var noteGroup = $NoteGroup
 @onready var audio : AudioStreamPlayer2D = $Audio
 
 var path = "D:\\osu!\\Songs"
+var og_play_area : Vector2 = Vector2(512, 384)
+var offset : Vector2 = Vector2(408, 196)
+
 
 
 # Called when the node enters the scene tree for the first time.
@@ -17,7 +23,9 @@ func _ready():
 	set_audio_stream(mp3)
 	#audio.play()
 	var metadata = read_osu_file(beatmap)
-	print(metadata)
+	#print(metadata)
+	
+	place_obects(metadata["HitObjects"])
 
 
 ## Set the AudioStreamPlayer's stream
@@ -39,15 +47,13 @@ func read_osu_file(beatmap: String) -> Dictionary:
 	
 	while not file.eof_reached():
 		var line = file.get_line()
-		print(line)
-		
+
 		if "[General]" in line:
 			current_metadata = line
 		if "[Metadata]" in line:
 			current_metadata = line
 		if "[HitObjects]" in line:
 			current_metadata = line
-		
 		
 		match current_metadata:
 			"[General]":
@@ -68,6 +74,31 @@ func read_osu_file(beatmap: String) -> Dictionary:
 							'type'  : raw_data[3],
 						}
 					metadata["HitObjects"].append(data)
+	file.close()
 	
 	return metadata
-	
+
+## Places objects in the play area (scaled)
+func place_obects(hitObjects: Array) -> void:
+	for obj in hitObjects:
+		var x = obj["x"].to_int()
+		var y = obj["y"].to_int()
+		var time = obj["time"]
+		var type = obj["type"]
+		var scaled_xy = get_scale_coords(x, y)
+		
+		var note = Note.instantiate()
+		noteGroup.add_child(note)
+		note.global_position = scaled_xy
+		
+		break
+		
+		
+## Get scaled coordinates given an (x, y)
+func get_scale_coords(x: int, y: int) -> Vector2:
+	return Vector2(x + offset.x, y + offset.y)
+
+
+#func _process(_delta):
+	#var pos = get_viewport().get_mouse_position()
+	#print(pos)
