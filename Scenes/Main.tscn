@@ -1,0 +1,32 @@
+[gd_scene load_steps=4 format=3 uid="uid://bil3o66huds7t"]
+
+[ext_resource type="Script" path="res://Scripts/Main.gd" id="1_w7xk5"]
+[ext_resource type="PackedScene" uid="uid://c10nf1ln4qv1t" path="res://Scenes/Note.tscn" id="2_e5mop"]
+[ext_resource type="Resource" uid="uid://cnqlm8ja0tkay" path="res://Resources/Map1.tres" id="2_u5sfc"]
+
+[node name="Main" type="Node2D"]
+script = ExtResource("1_w7xk5")
+Note = ExtResource("2_e5mop")
+beatmaps = Array[Resource]([ExtResource("2_u5sfc")])
+
+[node name="Audio" type="AudioStreamPlayer2D" parent="."]
+
+[node name="NoteGroup" type="Node2D" parent="."]
+
+[node name="PlayArea" type="ColorRect" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 116.0
+offset_top = 34.0
+offset_right = 1036.0
+offset_bottom = 614.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 4
+color = Color(0.184314, 0.184314, 0.184314, 1)
+
+[node name="SongTimer" type="Timer" parent="."]
+one_shot = true
