@@ -55,7 +55,6 @@ func _physics_process(delta):
 	if timeDifference <= threshold:
 		place_single_object(metadata["HitObjects"][index])
 		index += 1
-	
 
 
 ## Set the AudioStreamPlayer's stream
@@ -128,8 +127,7 @@ func read_osu_file(beatmap: String) -> void:
 					metadata["HitObjects"].append(data)
 	file.close()
 
-
-
+## Analyzing the slider to determine the proper slider data to be returned
 func analyze_slider(note: Dictionary) -> Dictionary:
 	if note["type"] & 2 == 0:
 		print("Error in analyzeSlider at " + note.time + ": Not a slider")
@@ -160,7 +158,6 @@ func analyze_slider(note: Dictionary) -> Dictionary:
 		_:
 			return {}
 
-	
 ## Returns the end point of a linear slider
 func get_linear_point(pts: Array[String]) -> Vector2:
 	return get_vector(pts[1])
