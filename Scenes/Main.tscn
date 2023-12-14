@@ -10,6 +10,7 @@ Note = ExtResource("2_e5mop")
 beatmaps = Array[Resource]([ExtResource("2_u5sfc")])
 
 [node name="Audio" type="AudioStreamPlayer2D" parent="."]
+volume_db = -10.0
 
 [node name="NoteGroup" type="Node2D" parent="."]
 
