@@ -7,11 +7,11 @@ extends Node
 var clickable : bool = false
 var approachRate : float = 0.0
 var mouseInArea : bool = false
+var cursor : Node2D
 
 func _process(_delta):
 	if mouseInArea and clickable:
-		SoundManager.hitSound.play()
-		queue_free()
+		hit_note()
 
 func _physics_process(_delta):
 	var timer_progress = 1.0 - (approachCircleTimer.time_left / approachCircleTimer.wait_time)
@@ -25,14 +25,23 @@ func _on_area_2d_area_entered(area):
 		#queue_free()
 	if area.get_parent().is_in_group("Cursor"):
 		mouseInArea = true
+		cursor = area.get_parent()
 
 func _on_queue_free_timer_timeout():
 	queue_free() 
 
 func _on_approach_circle_timer_timeout():
 	clickable = true
+	#play_hitsound()
 
 
 func _on_area_2d_area_exited(area):
 	if area.get_parent().is_in_group("Cursor"):
 		mouseInArea = false
+		area = null
+
+func hit_note():
+	if cursor.hitTimer.is_stopped():
+		cursor.hitTimer.start()
+		SoundManager.hitSound.play()
+		queue_free()

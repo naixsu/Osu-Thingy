@@ -30,7 +30,7 @@ var timeDifference : int = 0
 var slider : bool = false
 var sliderIndex : int = 0
 var sliderObj : Dictionary
-var hitObjStart : float = 607.0
+var hitObjStart : float = 588.0
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -62,13 +62,14 @@ func _physics_process(delta):
 	if index >= metadata["HitObjects"].size():
 		print("Stop")
 		return
+
 		
 	timeElapsed += delta
 	timeMS = int(timeElapsed * 1000)
 	var objTime = metadata["HitObjects"][index]["time"]
 	# using an offset here to start the approach circle
-	# 607ms is achieved by getting the time the moment a
-	# hitobject is visible in 1/16 beat
+	# 588 ms is achieved by getting the time the moment a
+	# hitobject is visible in 1/4 beat
 	var timeOffset = objTime - hitObjStart
 	timeDifference = abs(timeMS - timeOffset)
 	

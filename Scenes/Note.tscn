@@ -30,7 +30,6 @@ texture = ExtResource("3_rsikp")
 [node name="Timers" type="Node" parent="."]
 
 [node name="QueueFreeTimer" type="Timer" parent="Timers"]
-wait_time = 2.0
 one_shot = true
 
 [node name="ApproachCircleTimer" type="Timer" parent="Timers"]
