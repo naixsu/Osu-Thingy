@@ -1,5 +1,7 @@
 extends CharacterBody2D
 
+class_name Bullet
+
 @export var speed = 1000
 @export var damage = 20
 

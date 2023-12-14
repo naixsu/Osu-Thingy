@@ -2,13 +2,13 @@ extends Node
 class_name Main
 
 @export var Note : PackedScene
+@export var Cursor : PackedScene
 
 @export var beatmaps : Array[Resource]
 
 @onready var noteGroup = $NoteGroup
 @onready var audio : AudioStreamPlayer2D = $Audio
 @onready var songTimer : Timer = $SongTimer
-@onready var cursor : Node2D = $Cursor
 
 var path = "D:\\osu!\\Songs"
 var OGPlayArea : Vector2 = Vector2(512, 384)
@@ -31,10 +31,13 @@ var slider : bool = false
 var sliderIndex : int = 0
 var sliderObj : Dictionary
 var hitObjStart : float = 588.0
+var cursor : Node2D
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	Input.set_mouse_mode(Input.MOUSE_MODE_HIDDEN)
+	cursor = Cursor.instantiate()
+	add_child(cursor)
 	var i = 0
 	var mp3 : AudioStream = beatmaps[i].mp3
 	var beatmap = beatmaps[i].beatmap
