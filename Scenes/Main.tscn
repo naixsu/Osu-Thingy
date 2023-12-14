@@ -1,8 +1,12 @@
-[gd_scene load_steps=4 format=3 uid="uid://bil3o66huds7t"]
+[gd_scene load_steps=6 format=3 uid="uid://bil3o66huds7t"]
 
 [ext_resource type="Script" path="res://Scripts/Main.gd" id="1_w7xk5"]
 [ext_resource type="PackedScene" uid="uid://c10nf1ln4qv1t" path="res://Scenes/Note.tscn" id="2_e5mop"]
 [ext_resource type="Resource" uid="uid://cnqlm8ja0tkay" path="res://Resources/Map1.tres" id="2_u5sfc"]
+[ext_resource type="PackedScene" uid="uid://0xsjwouo75yi" path="res://Scenes/Cursor.tscn" id="4_8uebw"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_2m01f"]
+size = Vector2(920, 580)
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_w7xk5")
@@ -14,7 +18,14 @@ volume_db = -10.0
 
 [node name="NoteGroup" type="Node2D" parent="."]
 
-[node name="PlayArea" type="ColorRect" parent="."]
+[node name="SongTimer" type="Timer" parent="."]
+one_shot = true
+
+[node name="Cursor" parent="." instance=ExtResource("4_8uebw")]
+
+[node name="PlayArea" type="Node2D" parent="."]
+
+[node name="Area" type="ColorRect" parent="PlayArea"]
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -29,5 +40,9 @@ grow_vertical = 2
 size_flags_vertical = 4
 color = Color(0.184314, 0.184314, 0.184314, 1)
 
-[node name="SongTimer" type="Timer" parent="."]
-one_shot = true
+[node name="Area2D" type="Area2D" parent="PlayArea"]
+position = Vector2(116, 34)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PlayArea/Area2D"]
+position = Vector2(460, 290)
+shape = SubResource("RectangleShape2D_2m01f")

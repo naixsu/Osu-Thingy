@@ -1,0 +1,20 @@
+[gd_scene load_steps=3 format=3 uid="uid://0xsjwouo75yi"]
+
+[ext_resource type="Texture2D" uid="uid://n40rmiiuwug" path="res://Assets/Cursor.png" id="1_8xqhq"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_cvx72"]
+radius = 14.0
+
+[node name="Cursor" type="Node2D" groups=["Cursor"]]
+z_index = 10
+scale = Vector2(0.75, 0.75)
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture_filter = 1
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("1_8xqhq")
+
+[node name="Area2D" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+shape = SubResource("CircleShape2D_cvx72")

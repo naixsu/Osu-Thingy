@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://ddtffajq42eas" path="res://icon.svg" id="1_42e2n"]
 
 [node name="Note" type="Node2D"]
-z_index = 10
+z_index = 1
 script = ExtResource("1_4ba4c")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]

@@ -8,10 +8,12 @@ class_name Main
 @onready var noteGroup = $NoteGroup
 @onready var audio : AudioStreamPlayer2D = $Audio
 @onready var songTimer : Timer = $SongTimer
+@onready var cursor : Node2D = $Cursor
 
 var path = "D:\\osu!\\Songs"
 var OGPlayArea : Vector2 = Vector2(512, 384)
 var offset : Vector2 = Vector2(408, 196)
+var playArea : Vector2 = Vector2(920, 580)
 var songLength : float = 0
 var metadata : Dictionary = {
 	"General" : {},
@@ -31,6 +33,7 @@ var sliderObj : Dictionary
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	Input.set_mouse_mode(Input.MOUSE_MODE_HIDDEN)
 	var i = 0
 	var mp3 : AudioStream = beatmaps[i].mp3
 	var beatmap = beatmaps[i].beatmap
@@ -47,8 +50,14 @@ func _ready():
 	#place_obects(metadata["HitObjects"])
 	print(metadata["HitObjects"].size())
 
+func _process(_delta):
+	update_cursor_position()
+
 func _physics_process(delta):
 	#print(songTimer.time_left)
+	
+	
+	
 	if index >= metadata["HitObjects"].size():
 		print("Stop")
 		return
@@ -271,5 +280,12 @@ func get_vector(point: String) -> Vector2:
 ## Get scaled coordinates given an (x, y)
 func get_scale_coords(x: int, y: int) -> Vector2:
 	return Vector2(x + offset.x, y + offset.y)
+
+## Update cursor position and clamps it based on the playArea
+func update_cursor_position():
+	cursor.position = get_viewport().get_mouse_position()
+	#cursor.position.x = clamp(cursor.position.x, 116, playArea.x + 116)
+	#cursor.position.y = clamp(cursor.position.y, 34, playArea.y + 34)
+	
 
 #endregion
