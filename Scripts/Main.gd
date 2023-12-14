@@ -226,7 +226,12 @@ func place_single_object(obj: Dictionary) -> void:
 	
 	var note = Note.instantiate()
 	noteGroup.add_child(note)
-	note.timer.start()
+	# this could be optimized by making autostart on
+	# each timers true but i decided to stick with
+	# using the start() method
+	note.queueFreeTimer.start()
+	note.approachCircleTimer.start()
+	note.approachRate = metadata["Difficulty"]["ApproachRate"].to_float()
 	note.global_position = scaledXY
 	note.scale = Vector2(circleSize - 1, circleSize - 1)
 	

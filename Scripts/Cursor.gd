@@ -14,5 +14,5 @@ func _process(delta):
 
 
 func _on_area_2d_area_entered(area):
-	if area.get_parent().is_in_group("Note"):
+	if area.get_parent().is_in_group("Note") and area.get_parent().clickable:
 		audio.play()
