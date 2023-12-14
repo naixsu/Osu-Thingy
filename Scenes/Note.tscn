@@ -23,7 +23,6 @@ z_index = -1
 shape = SubResource("CircleShape2D_5xifv")
 
 [node name="ApproachCircle" type="Sprite2D" parent="."]
-visible = false
 self_modulate = Color(1, 1, 1, 0.392157)
 scale = Vector2(0.5, 0.5)
 texture = ExtResource("3_rsikp")
@@ -35,6 +34,9 @@ wait_time = 2.0
 one_shot = true
 
 [node name="ApproachCircleTimer" type="Timer" parent="Timers"]
+one_shot = true
 
 [connection signal="area_entered" from="Area2D" to="." method="_on_area_2d_area_entered"]
+[connection signal="area_exited" from="Area2D" to="." method="_on_area_2d_area_exited"]
 [connection signal="timeout" from="Timers/QueueFreeTimer" to="." method="_on_queue_free_timer_timeout"]
+[connection signal="timeout" from="Timers/ApproachCircleTimer" to="." method="_on_approach_circle_timer_timeout"]

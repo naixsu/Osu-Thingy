@@ -30,6 +30,7 @@ var timeDifference : int = 0
 var slider : bool = false
 var sliderIndex : int = 0
 var sliderObj : Dictionary
+var hitObjStart : float = 607.0
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -48,7 +49,7 @@ func _ready():
 	songTimer.wait_time = songLength / 1000 
 	songTimer.start()
 	#place_obects(metadata["HitObjects"])
-	print(metadata["HitObjects"].size())
+	#print(metadata["HitObjects"].size())
 
 func _process(_delta):
 	update_cursor_position()
@@ -64,14 +65,25 @@ func _physics_process(delta):
 		
 	timeElapsed += delta
 	timeMS = int(timeElapsed * 1000)
-	timeDifference = abs(timeMS - metadata["HitObjects"][index]["time"])
+	var objTime = metadata["HitObjects"][index]["time"]
+	# using an offset here to start the approach circle
+	# 607ms is achieved by getting the time the moment a
+	# hitobject is visible in 1/16 beat
+	var timeOffset = objTime - hitObjStart
+	timeDifference = abs(timeMS - timeOffset)
 	
 	#print(timeMS)
 	
 	if timeDifference <= threshold:
-		#print("timeDifference ", timeDifference, " objTime ", metadata["HitObjects"][index]["time"])
+		print("timeDifference ", timeDifference)
 		place_single_object(metadata["HitObjects"][index])
 		index += 1
+	
+	#if timeDifference <= threshold:
+		#print("timeDifference ", timeDifference, " objTime ", metadata["HitObjects"][index]["time"], " offset ", metadata["HitObjects"][index]["time"] - 588)
+		#place_single_object(metadata["HitObjects"][index])
+		#index += 1
+		
 	
 	#if slider:
 		#place_slider()
@@ -226,12 +238,15 @@ func place_single_object(obj: Dictionary) -> void:
 	
 	var note = Note.instantiate()
 	noteGroup.add_child(note)
+	note.approachRate = metadata["Difficulty"]["ApproachRate"].to_float()
+	note.approachCircleTimer.wait_time = hitObjStart / 1000
+	#note.queueFreeTimer.wait_time = 1
 	# this could be optimized by making autostart on
 	# each timers true but i decided to stick with
 	# using the start() method
 	note.queueFreeTimer.start()
 	note.approachCircleTimer.start()
-	note.approachRate = metadata["Difficulty"]["ApproachRate"].to_float()
+	
 	note.global_position = scaledXY
 	note.scale = Vector2(circleSize - 1, circleSize - 1)
 	
