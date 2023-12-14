@@ -30,7 +30,7 @@ var timeDifference : int = 0
 var slider : bool = false
 var sliderIndex : int = 0
 var sliderObj : Dictionary
-var hitObjStart : float = 607.0
+var hitObjStart : float = 588.0
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -62,21 +62,23 @@ func _physics_process(delta):
 	if index >= metadata["HitObjects"].size():
 		print("Stop")
 		return
+
 		
 	timeElapsed += delta
 	timeMS = int(timeElapsed * 1000)
 	var objTime = metadata["HitObjects"][index]["time"]
 	# using an offset here to start the approach circle
-	# 607ms is achieved by getting the time the moment a
-	# hitobject is visible in 1/16 beat
+	# 588 ms is achieved by getting the time the moment a
+	# hitobject is visible in 1/4 beat
 	var timeOffset = objTime - hitObjStart
 	timeDifference = abs(timeMS - timeOffset)
 	
 	#print(timeMS)
 	
 	if timeDifference <= threshold:
-		print("timeDifference ", timeDifference)
+		#print("timeDifference ", timeDifference)
 		place_single_object(metadata["HitObjects"][index])
+		#print(metadata["HitObjects"][index]["type"])
 		index += 1
 	
 	#if timeDifference <= threshold:
@@ -238,13 +240,14 @@ func place_single_object(obj: Dictionary) -> void:
 	
 	var note = Note.instantiate()
 	noteGroup.add_child(note)
+	note.hitCircle.set_self_modulate(Color(1, 1, 1, 0))
 	note.approachRate = metadata["Difficulty"]["ApproachRate"].to_float()
 	note.approachCircleTimer.wait_time = hitObjStart / 1000
 	#note.queueFreeTimer.wait_time = 1
 	# this could be optimized by making autostart on
 	# each timers true but i decided to stick with
 	# using the start() method
-	note.queueFreeTimer.start()
+	#note.queueFreeTimer.start()
 	note.approachCircleTimer.start()
 	
 	note.global_position = scaledXY

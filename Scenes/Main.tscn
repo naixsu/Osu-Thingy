@@ -41,6 +41,7 @@ size_flags_vertical = 4
 color = Color(0.184314, 0.184314, 0.184314, 1)
 
 [node name="Area2D" type="Area2D" parent="PlayArea"]
+visible = false
 position = Vector2(116, 34)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="PlayArea/Area2D"]
