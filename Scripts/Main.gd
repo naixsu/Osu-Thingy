@@ -38,7 +38,7 @@ func _ready():
 	Input.set_mouse_mode(Input.MOUSE_MODE_HIDDEN)
 	cursor = Cursor.instantiate()
 	add_child(cursor)
-	var i = 0
+	var i = 1
 	var mp3 : AudioStream = beatmaps[i].mp3
 	var beatmap = beatmaps[i].beatmap
 	read_osu_file(beatmap)
