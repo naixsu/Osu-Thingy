@@ -228,7 +228,7 @@ func place_single_object(obj: Dictionary) -> void:
 	noteGroup.add_child(note)
 	note.timer.start()
 	note.global_position = scaledXY
-	note.scale = Vector2(circleSize, circleSize)
+	note.scale = Vector2(circleSize - 1, circleSize - 1)
 	
 	#if type == 2 or type == 6:
 		#place_slider(obj)
