@@ -57,6 +57,7 @@ func _physics_process(delta):
 		index += 1
 
 
+#region Init
 ## Set the AudioStreamPlayer's stream
 func set_audio_stream(mp3: AudioStream) -> void:
 	audio.set_stream(mp3)
@@ -127,6 +128,9 @@ func read_osu_file(beatmap: String) -> void:
 					metadata["HitObjects"].append(data)
 	file.close()
 
+#endregion
+
+#region Slider stuff
 ## Analyzing the slider to determine the proper slider data to be returned
 func analyze_slider(note: Dictionary) -> Dictionary:
 	if note["type"] & 2 == 0:
@@ -183,13 +187,8 @@ func get_bezier_points(pts: Array[String]) -> Array:
 	
 	return arr
 
-## Returns a Vector2 from a string with format "x:y"
-func get_vector(point: String) -> Vector2:
-	var p = point.split(":")
-	var x = p[0].to_int()
-	var y = p[1].to_int()
-	
-	return Vector2(x, y)
+#endregion
+
 
 ## Places objects in the play area (scaled)
 func place_obects(hitObjects: Array) -> void:
@@ -218,6 +217,18 @@ func place_slider(obj: Dictionary) -> void:
 	print(obj)
 	pass
 		
+		
+#region General methods
+## Returns a Vector2 from a string with format "x:y"
+func get_vector(point: String) -> Vector2:
+	var p = point.split(":")
+	var x = p[0].to_int()
+	var y = p[1].to_int()
+	
+	return Vector2(x, y)
+
 ## Get scaled coordinates given an (x, y)
 func get_scale_coords(x: int, y: int) -> Vector2:
 	return Vector2(x + offset.x, y + offset.y)
+
+#endregion
