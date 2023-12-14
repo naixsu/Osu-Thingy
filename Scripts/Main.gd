@@ -239,13 +239,14 @@ func place_single_object(obj: Dictionary) -> void:
 	
 	var note = Note.instantiate()
 	noteGroup.add_child(note)
+	note.hitCircle.set_self_modulate(Color(1, 1, 1, 0))
 	note.approachRate = metadata["Difficulty"]["ApproachRate"].to_float()
 	note.approachCircleTimer.wait_time = hitObjStart / 1000
 	#note.queueFreeTimer.wait_time = 1
 	# this could be optimized by making autostart on
 	# each timers true but i decided to stick with
 	# using the start() method
-	note.queueFreeTimer.start()
+	#note.queueFreeTimer.start()
 	note.approachCircleTimer.start()
 	
 	note.global_position = scaledXY
