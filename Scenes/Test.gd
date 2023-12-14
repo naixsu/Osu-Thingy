@@ -34,9 +34,11 @@ func _ready():
 			var button = packed_key.instantiate()
 			button.name = key_names[key_index]
 			button.text = key_names[key_index]
+			button.disabled = randi() % 2 == 0
 			hbox_containers[i].add_child(button)
 			key_index += 1
-		print("\nnew\n")
+	
+	
 
 func _input(event):
 	if event is InputEventKey and event.pressed:
