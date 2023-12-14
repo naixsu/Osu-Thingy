@@ -4,6 +4,7 @@ extends Node
 @onready var approachCircleTimer : Timer = $Timers/ApproachCircleTimer
 @onready var approachCircle : Sprite2D = $ApproachCircle
 @onready var hitCircle : Sprite2D = $HitCircle
+@onready var combo = $Combo
 
 var clickable : bool = false
 var approachRate : float = 0.0

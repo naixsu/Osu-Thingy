@@ -76,8 +76,9 @@ func _physics_process(delta):
 	#print(timeMS)
 	
 	if timeDifference <= threshold:
-		print("timeDifference ", timeDifference)
+		#print("timeDifference ", timeDifference)
 		place_single_object(metadata["HitObjects"][index])
+		#print(metadata["HitObjects"][index]["type"])
 		index += 1
 	
 	#if timeDifference <= threshold:
