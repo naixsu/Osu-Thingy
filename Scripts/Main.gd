@@ -30,7 +30,8 @@ var timeDifference : int = 0
 var slider : bool = false
 var sliderIndex : int = 0
 var sliderObj : Dictionary
-var hitObjStart : float = 588.0
+#var hitObjStart : float = 588.0
+var hitObjStart : float = 0.0
 var cursor : Node2D
 var isDead : bool = false
 
@@ -43,7 +44,7 @@ func _ready():
 	# Honesty
 	# Torinoko City
 	
-	var i = 0
+	var i = 1
 	var mp3 : AudioStream = beatmaps[i].mp3
 	var beatmap = beatmaps[i].beatmap
 	
@@ -59,11 +60,36 @@ func _ready():
 	songTimer.start()
 	#place_obects(metadata["HitObjects"])
 	#print(metadata["HitObjects"].size())
+	
+	# https://osu.ppy.sh/wiki/en/Beatmap/Approach_rate
+	# https://www.desmos.com/calculator/ha9h7as3hx
+	var objTime = metadata["HitObjects"][index]["time"]
+	var ar = metadata["Difficulty"]["ApproachRate"].to_float()
+	var preempt = 0
+	#if ar < 5:
+		#preempt = 0.8 + 0.4 * (5 - ar) / 5
+	#elif ar == 5:
+		#preempt = 0.8
+	#else:
+		#preempt = 0.8 - 0.5 * (ar - 5) / 5
+	if ar < 5:
+		preempt = 1.2 + 0.6 * (5 - ar) / 5
+	elif ar == 5:
+		preempt = 1.2
+	else:
+		preempt = 1.2 - 0.75 * (ar - 5) / 5
+	preempt *= 1000
+	print(preempt)
+
+
+	print("Duration for AR ", ar , " : ", preempt)
+	hitObjStart = preempt
 
 func _process(_delta):
 	update_cursor_position()
 
 func _physics_process(delta):
+	
 	if isDead:
 		audio.stop()
 		return
@@ -78,11 +104,10 @@ func _physics_process(delta):
 	#print(timeMS)
 	var objTime = metadata["HitObjects"][index]["time"]
 	# using an offset here to start the approach circle
-	# 588 ms is achieved by getting the time the moment a
-	# hitobject is visible in 1/4 beat
 	# TODO: Update this offset
 	var timeOffset = objTime - hitObjStart
-
+	timeOffset += 25 # Arbitrary value
+	
 	timeDifference = abs(timeMS - timeOffset)
 	
 	#print(timeMS, " - ", timeOffset, " - ", timeDifference)
@@ -93,23 +118,23 @@ func _physics_process(delta):
 	# to instantiate the note as close to the 
 	# object time as possible
 	if timeDifference <= 1:
-		print("timeDifference ", timeDifference)
+		print(timeMS, " : ", timeOffset, " : ", timeDifference)
 		place_single_object(metadata["HitObjects"][index])
 		index += 1
 	elif timeDifference <= 2:
-		print("timeDifference ", timeDifference)
+		print(timeMS, " : ", timeOffset, " : ", timeDifference)
 		place_single_object(metadata["HitObjects"][index])
 		index += 1
 	elif timeDifference <= 3:
-		print("timeDifference ", timeDifference)
+		print(timeMS, " : ", timeOffset, " : ", timeDifference)
 		place_single_object(metadata["HitObjects"][index])
 		index += 1
 	elif timeDifference <= 4:
-		print("timeDifference ", timeDifference)
+		print(timeMS, " : ", timeOffset, " : ", timeDifference)
 		place_single_object(metadata["HitObjects"][index])
 		index += 1
 	elif timeDifference <= 5:
-		print("timeDifference ", timeDifference)
+		print(timeMS, " : ", timeOffset, " : ", timeDifference)
 		place_single_object(metadata["HitObjects"][index])
 		index += 1
 	elif timeDifference <= threshold:
