@@ -32,11 +32,13 @@ var sliderIndex : int = 0
 var sliderObj : Dictionary
 var hitObjStart : float = 588.0
 var cursor : Node2D
+var isDead : bool = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	Input.set_mouse_mode(Input.MOUSE_MODE_HIDDEN)
 	cursor = Cursor.instantiate()
+	cursor.connect("dead", dead)
 	add_child(cursor)
 	var i = 1
 	var mp3 : AudioStream = beatmaps[i].mp3
@@ -60,6 +62,9 @@ func _process(_delta):
 func _physics_process(delta):
 	#print(songTimer.time_left)
 	
+	if isDead:
+		audio.stop()
+		return
 	
 	
 	if index >= metadata["HitObjects"].size():
@@ -308,10 +313,14 @@ func get_scale_coords(x: int, y: int) -> Vector2:
 	return Vector2(x + offset.x, y + offset.y)
 
 ## Update cursor position and clamps it based on the playArea
-func update_cursor_position():
+func update_cursor_position() -> void:
 	cursor.position = get_viewport().get_mouse_position()
 	#cursor.position.x = clamp(cursor.position.x, 116, playArea.x + 116)
 	#cursor.position.y = clamp(cursor.position.y, 34, playArea.y + 34)
+
+func dead() -> void:
+	isDead = true
+
 	
 
 #endregion
