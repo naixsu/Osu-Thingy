@@ -21,11 +21,11 @@ var metadata : Dictionary = {
 	"Difficulty": {},
 	"HitObjects": [],
 }
-var timeElapsed : float = 0.0
+var timeElapsed : float = 0.015 # add 15s coz osu starts at 00:00:015
 var index = 0
 var circleSize : float
 var timeMS : int = 0
-var threshold : int = 15 # threshold of 15 ms
+var threshold : int = 5 # threshold of 5 ms
 var timeDifference : int = 0
 var slider : bool = false
 var sliderIndex : int = 0
@@ -64,13 +64,10 @@ func _process(_delta):
 	update_cursor_position()
 
 func _physics_process(delta):
-	#print(songTimer.time_left)
-	
 	if isDead:
 		audio.stop()
 		return
-	
-	
+
 	if index >= metadata["HitObjects"].size():
 		print("Stop")
 		return
@@ -78,20 +75,46 @@ func _physics_process(delta):
 		
 	timeElapsed += delta
 	timeMS = int(timeElapsed * 1000)
+	#print(timeMS)
 	var objTime = metadata["HitObjects"][index]["time"]
 	# using an offset here to start the approach circle
 	# 588 ms is achieved by getting the time the moment a
 	# hitobject is visible in 1/4 beat
 	# TODO: Update this offset
 	var timeOffset = objTime - hitObjStart
+
 	timeDifference = abs(timeMS - timeOffset)
 	
-	#print(timeMS)
+	#print(timeMS, " - ", timeOffset, " - ", timeDifference)
 	
-	if timeDifference <= threshold:
-		#print("timeDifference ", timeDifference)
+	
+	# TODO: Optimize this
+	# essentially gets the least time difference possible
+	# to instantiate the note as close to the 
+	# object time as possible
+	if timeDifference <= 1:
+		print("timeDifference ", timeDifference)
 		place_single_object(metadata["HitObjects"][index])
-		#print(metadata["HitObjects"][index]["type"])
+		index += 1
+	elif timeDifference <= 2:
+		print("timeDifference ", timeDifference)
+		place_single_object(metadata["HitObjects"][index])
+		index += 1
+	elif timeDifference <= 3:
+		print("timeDifference ", timeDifference)
+		place_single_object(metadata["HitObjects"][index])
+		index += 1
+	elif timeDifference <= 4:
+		print("timeDifference ", timeDifference)
+		place_single_object(metadata["HitObjects"][index])
+		index += 1
+	elif timeDifference <= 5:
+		print("timeDifference ", timeDifference)
+		place_single_object(metadata["HitObjects"][index])
+		index += 1
+	else:
+		print("timeDifference ", timeDifference)
+		place_single_object(metadata["HitObjects"][index])
 		index += 1
 		
 	#if slider:
