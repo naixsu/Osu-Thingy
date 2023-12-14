@@ -1,18 +1,28 @@
-[gd_scene load_steps=3 format=3 uid="uid://c10nf1ln4qv1t"]
+[gd_scene load_steps=4 format=3 uid="uid://c10nf1ln4qv1t"]
 
 [ext_resource type="Script" path="res://Scripts/Note.gd" id="1_4ba4c"]
-[ext_resource type="Texture2D" uid="uid://ddtffajq42eas" path="res://icon.svg" id="1_42e2n"]
+[ext_resource type="Texture2D" uid="uid://y21rpnrf7vjh" path="res://Assets/HitCircle.png" id="2_0hb06"]
 
-[node name="Note" type="Node2D"]
+[sub_resource type="CircleShape2D" id="CircleShape2D_5xifv"]
+radius = 12.0
+
+[node name="Note" type="Node2D" groups=["Note"]]
 z_index = 1
+scale = Vector2(0.5, 0.5)
 script = ExtResource("1_4ba4c")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 scale = Vector2(0.109375, 0.109375)
-texture = ExtResource("1_42e2n")
+texture = ExtResource("2_0hb06")
 
 [node name="Timer" type="Timer" parent="."]
 wait_time = 2.0
 one_shot = true
 
+[node name="Area2D" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+shape = SubResource("CircleShape2D_5xifv")
+
 [connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
+[connection signal="area_entered" from="Area2D" to="." method="_on_area_2d_area_entered"]

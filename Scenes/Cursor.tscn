@@ -1,6 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://0xsjwouo75yi"]
+[gd_scene load_steps=5 format=3 uid="uid://0xsjwouo75yi"]
 
 [ext_resource type="Texture2D" uid="uid://n40rmiiuwug" path="res://Assets/Cursor.png" id="1_8xqhq"]
+[ext_resource type="Script" path="res://Scripts/Cursor.gd" id="1_cqqe3"]
+[ext_resource type="AudioStream" uid="uid://xbas7k5myvy2" path="res://Assets/HitSound.wav" id="3_4do07"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_cvx72"]
 radius = 14.0
@@ -8,6 +10,7 @@ radius = 14.0
 [node name="Cursor" type="Node2D" groups=["Cursor"]]
 z_index = 10
 scale = Vector2(0.75, 0.75)
+script = ExtResource("1_cqqe3")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture_filter = 1
@@ -18,3 +21,9 @@ texture = ExtResource("1_8xqhq")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
 shape = SubResource("CircleShape2D_cvx72")
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("3_4do07")
+volume_db = -10.0
+
+[connection signal="area_entered" from="Area2D" to="." method="_on_area_2d_area_entered"]
