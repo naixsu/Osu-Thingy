@@ -21,47 +21,79 @@ var metadata : Dictionary = {
 	"Difficulty": {},
 	"HitObjects": [],
 }
-var timeElapsed : float = 0.0
+var timeElapsed : float = 0.015 # add 15s coz osu starts at 00:00:015
 var index = 0
 var circleSize : float
 var timeMS : int = 0
-var threshold : int = 15 # threshold of 15 ms
+var threshold : int = 5 # threshold of 5 ms
 var timeDifference : int = 0
 var slider : bool = false
 var sliderIndex : int = 0
 var sliderObj : Dictionary
-var hitObjStart : float = 588.0
+#var hitObjStart : float = 588.0
+var hitObjStart : float = 0.0
 var cursor : Node2D
+var isDead : bool = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	Input.set_mouse_mode(Input.MOUSE_MODE_HIDDEN)
-	cursor = Cursor.instantiate()
-	add_child(cursor)
-	var i = 0
+	init_cursor()
+	
+	# TODO: Maps to investigate, coz way too desynced
+	# Shiwa is alright but a bit desynced
+	# Honesty
+	# Torinoko City
+	
+	var i = 1
 	var mp3 : AudioStream = beatmaps[i].mp3
 	var beatmap = beatmaps[i].beatmap
+	
 	read_osu_file(beatmap)
 	circleSize = float(metadata["Difficulty"]["CircleSize"])
 	#print(metadata["Difficulty"])
 	set_audio_stream(mp3)
 	audio.play()
 	# Get the song length in ms
-	songLength = set_song_length()
+	songLength = get_song_length()
 	# Turn back timer to s from ms
 	songTimer.wait_time = songLength / 1000 
 	songTimer.start()
 	#place_obects(metadata["HitObjects"])
 	#print(metadata["HitObjects"].size())
+	
+	# https://osu.ppy.sh/wiki/en/Beatmap/Approach_rate
+	# https://www.desmos.com/calculator/ha9h7as3hx
+	var objTime = metadata["HitObjects"][index]["time"]
+	var ar = metadata["Difficulty"]["ApproachRate"].to_float()
+	var preempt = 0
+	#if ar < 5:
+		#preempt = 0.8 + 0.4 * (5 - ar) / 5
+	#elif ar == 5:
+		#preempt = 0.8
+	#else:
+		#preempt = 0.8 - 0.5 * (ar - 5) / 5
+	if ar < 5:
+		preempt = 1.2 + 0.6 * (5 - ar) / 5
+	elif ar == 5:
+		preempt = 1.2
+	else:
+		preempt = 1.2 - 0.75 * (ar - 5) / 5
+	preempt *= 1000
+	print(preempt)
+
+
+	print("Duration for AR ", ar , " : ", preempt)
+	hitObjStart = preempt
 
 func _process(_delta):
 	update_cursor_position()
 
 func _physics_process(delta):
-	#print(songTimer.time_left)
 	
-	
-	
+	if isDead:
+		audio.stop()
+		return
+
 	if index >= metadata["HitObjects"].size():
 		print("Stop")
 		return
@@ -69,38 +101,65 @@ func _physics_process(delta):
 		
 	timeElapsed += delta
 	timeMS = int(timeElapsed * 1000)
+	#print(timeMS)
 	var objTime = metadata["HitObjects"][index]["time"]
 	# using an offset here to start the approach circle
-	# 588 ms is achieved by getting the time the moment a
-	# hitobject is visible in 1/4 beat
+	# TODO: Update this offset
 	var timeOffset = objTime - hitObjStart
+	timeOffset += 25 # Arbitrary value
+	
 	timeDifference = abs(timeMS - timeOffset)
 	
-	#print(timeMS)
+	#print(timeMS, " - ", timeOffset, " - ", timeDifference)
 	
-	if timeDifference <= threshold:
-		#print("timeDifference ", timeDifference)
+	
+	# TODO: Optimize this
+	# essentially gets the least time difference possible
+	# to instantiate the note as close to the 
+	# object time as possible
+	if timeDifference <= 1:
+		print(timeMS, " : ", timeOffset, " : ", timeDifference)
 		place_single_object(metadata["HitObjects"][index])
-		#print(metadata["HitObjects"][index]["type"])
 		index += 1
-	
-	#if timeDifference <= threshold:
-		#print("timeDifference ", timeDifference, " objTime ", metadata["HitObjects"][index]["time"], " offset ", metadata["HitObjects"][index]["time"] - 588)
-		#place_single_object(metadata["HitObjects"][index])
-		#index += 1
+	elif timeDifference <= 2:
+		print(timeMS, " : ", timeOffset, " : ", timeDifference)
+		place_single_object(metadata["HitObjects"][index])
+		index += 1
+	elif timeDifference <= 3:
+		print(timeMS, " : ", timeOffset, " : ", timeDifference)
+		place_single_object(metadata["HitObjects"][index])
+		index += 1
+	elif timeDifference <= 4:
+		print(timeMS, " : ", timeOffset, " : ", timeDifference)
+		place_single_object(metadata["HitObjects"][index])
+		index += 1
+	elif timeDifference <= 5:
+		print(timeMS, " : ", timeOffset, " : ", timeDifference)
+		place_single_object(metadata["HitObjects"][index])
+		index += 1
+	elif timeDifference <= threshold:
+		print("else timeDifference ", timeDifference)
+		place_single_object(metadata["HitObjects"][index])
+		index += 1
 		
-	
 	#if slider:
 		#place_slider()
 
 
 #region Init
+## Initializes the cursor and its signals
+func init_cursor() -> void:
+	Input.set_mouse_mode(Input.MOUSE_MODE_HIDDEN)
+	cursor = Cursor.instantiate()
+	cursor.connect("dead", dead)
+	add_child(cursor)
+
 ## Set the AudioStreamPlayer's stream
 func set_audio_stream(mp3: AudioStream) -> void:
 	audio.set_stream(mp3)
 
 ## Set the song length in s to ms
-func set_song_length() -> int:
+func get_song_length() -> int:
 	var length: float = audio.stream.get_length()
 	var ms: int = length * 1000
 	return ms
@@ -308,10 +367,14 @@ func get_scale_coords(x: int, y: int) -> Vector2:
 	return Vector2(x + offset.x, y + offset.y)
 
 ## Update cursor position and clamps it based on the playArea
-func update_cursor_position():
+func update_cursor_position() -> void:
 	cursor.position = get_viewport().get_mouse_position()
 	#cursor.position.x = clamp(cursor.position.x, 116, playArea.x + 116)
 	#cursor.position.y = clamp(cursor.position.y, 34, playArea.y + 34)
+
+func dead() -> void:
+	isDead = true
+
 	
 
 #endregion

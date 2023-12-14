@@ -20,6 +20,11 @@ config/icon="res://icon.svg"
 SoundManager="*res://Autoload/SoundManager.tscn"
 BulletManager="*res://Autoload/BulletManager.tscn"
 
+[physics]
+
+common/physics_ticks_per_second=240
+common/physics_jitter_fix=0.0
+
 [rendering]
 
 renderer/rendering_method="mobile"
