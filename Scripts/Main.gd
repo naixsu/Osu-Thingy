@@ -40,6 +40,11 @@ func _ready():
 	cursor = Cursor.instantiate()
 	cursor.connect("dead", dead)
 	add_child(cursor)
+	
+	# TODO: Maps to investigate, coz way too desynced
+	# Honesty
+	# Torinoko City
+	
 	var i = 1
 	var mp3 : AudioStream = beatmaps[i].mp3
 	var beatmap = beatmaps[i].beatmap

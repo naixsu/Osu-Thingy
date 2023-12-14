@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="MapResource" load_steps=3 format=3 uid="uid://djkcx51x4xbff"]
+
+[ext_resource type="Script" path="res://Resources/MapResource.gd" id="1_pkwtc"]
+[ext_resource type="AudioStream" uid="uid://cmque0uqe4t46" path="res://Songs/Torinoko City/audio.mp3" id="1_ss32o"]
+
+[resource]
+script = ExtResource("1_pkwtc")
+mp3 = ExtResource("1_ss32o")
+beatmap = "res://Songs/Torinoko City/beatmap.txt"
