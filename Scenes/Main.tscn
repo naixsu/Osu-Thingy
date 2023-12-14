@@ -18,6 +18,8 @@ volume_db = -10.0
 
 [node name="NoteGroup" type="Node2D" parent="."]
 
+[node name="BulletGroup" type="Node2D" parent="."]
+
 [node name="SongTimer" type="Timer" parent="."]
 one_shot = true
 
