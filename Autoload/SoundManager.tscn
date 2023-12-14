@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://bkwpqvfhlfxiq"]
+
+[ext_resource type="Script" path="res://Autoload/SoundManager.gd" id="1_q8v6o"]
+[ext_resource type="AudioStream" uid="uid://xbas7k5myvy2" path="res://Assets/HitSound.wav" id="2_m5mrh"]
+
+[node name="SoundManager" type="Node2D"]
+script = ExtResource("1_q8v6o")
+
+[node name="HitSound" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("2_m5mrh")
+volume_db = -10.0
