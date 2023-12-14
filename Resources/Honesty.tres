@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="MapResource" load_steps=3 format=3 uid="uid://cluhjm6rkaye1"]
+
+[ext_resource type="Script" path="res://Resources/MapResource.gd" id="1_a8sw3"]
+[ext_resource type="AudioStream" uid="uid://dp5rtkue42731" path="res://Songs/Honesty/audio.mp3" id="1_tbwjl"]
+
+[resource]
+script = ExtResource("1_a8sw3")
+mp3 = ExtResource("1_tbwjl")
+beatmap = "res://Songs/Honesty/beatmap.txt"
