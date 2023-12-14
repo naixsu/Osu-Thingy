@@ -112,8 +112,8 @@ func _physics_process(delta):
 		print("timeDifference ", timeDifference)
 		place_single_object(metadata["HitObjects"][index])
 		index += 1
-	else:
-		print("timeDifference ", timeDifference)
+	elif timeDifference <= threshold:
+		print("else timeDifference ", timeDifference)
 		place_single_object(metadata["HitObjects"][index])
 		index += 1
 		
