@@ -36,25 +36,24 @@ var isDead : bool = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	Input.set_mouse_mode(Input.MOUSE_MODE_HIDDEN)
-	cursor = Cursor.instantiate()
-	cursor.connect("dead", dead)
-	add_child(cursor)
+	init_cursor()
 	
 	# TODO: Maps to investigate, coz way too desynced
+	# Shiwa is alright but a bit desynced
 	# Honesty
 	# Torinoko City
 	
-	var i = 1
+	var i = 0
 	var mp3 : AudioStream = beatmaps[i].mp3
 	var beatmap = beatmaps[i].beatmap
+	
 	read_osu_file(beatmap)
 	circleSize = float(metadata["Difficulty"]["CircleSize"])
 	#print(metadata["Difficulty"])
 	set_audio_stream(mp3)
 	audio.play()
 	# Get the song length in ms
-	songLength = set_song_length()
+	songLength = get_song_length()
 	# Turn back timer to s from ms
 	songTimer.wait_time = songLength / 1000 
 	songTimer.start()
@@ -83,6 +82,7 @@ func _physics_process(delta):
 	# using an offset here to start the approach circle
 	# 588 ms is achieved by getting the time the moment a
 	# hitobject is visible in 1/4 beat
+	# TODO: Update this offset
 	var timeOffset = objTime - hitObjStart
 	timeDifference = abs(timeMS - timeOffset)
 	
@@ -93,24 +93,25 @@ func _physics_process(delta):
 		place_single_object(metadata["HitObjects"][index])
 		#print(metadata["HitObjects"][index]["type"])
 		index += 1
-	
-	#if timeDifference <= threshold:
-		#print("timeDifference ", timeDifference, " objTime ", metadata["HitObjects"][index]["time"], " offset ", metadata["HitObjects"][index]["time"] - 588)
-		#place_single_object(metadata["HitObjects"][index])
-		#index += 1
 		
-	
 	#if slider:
 		#place_slider()
 
 
 #region Init
+## Initializes the cursor and its signals
+func init_cursor() -> void:
+	Input.set_mouse_mode(Input.MOUSE_MODE_HIDDEN)
+	cursor = Cursor.instantiate()
+	cursor.connect("dead", dead)
+	add_child(cursor)
+
 ## Set the AudioStreamPlayer's stream
 func set_audio_stream(mp3: AudioStream) -> void:
 	audio.set_stream(mp3)
 
 ## Set the song length in s to ms
-func set_song_length() -> int:
+func get_song_length() -> int:
 	var length: float = audio.stream.get_length()
 	var ms: int = length * 1000
 	return ms
