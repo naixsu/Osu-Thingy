@@ -34,6 +34,8 @@ func _on_area_2d_area_entered(area):
 		cursor = area.get_parent()
 
 func _on_queue_free_timer_timeout():
+	SoundManager.comboBreak.play()
+	BulletManager.spawn_bullets(self.position)
 	queue_free() 
 
 func _on_approach_circle_timer_timeout():

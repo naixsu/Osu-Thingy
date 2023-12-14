@@ -18,6 +18,7 @@ texture = ExtResource("2_0hb06")
 
 [node name="Area2D" type="Area2D" parent="."]
 z_index = -1
+collision_layer = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
 shape = SubResource("CircleShape2D_5xifv")
@@ -30,7 +31,7 @@ texture = ExtResource("3_rsikp")
 [node name="Timers" type="Node" parent="."]
 
 [node name="QueueFreeTimer" type="Timer" parent="Timers"]
-wait_time = 0.3
+wait_time = 0.2
 one_shot = true
 
 [node name="ApproachCircleTimer" type="Timer" parent="Timers"]
