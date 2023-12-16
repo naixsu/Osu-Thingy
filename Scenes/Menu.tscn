@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://bxo5db0q4flys"]
+[gd_scene load_steps=3 format=3 uid="uid://bxo5db0q4flys"]
 
 [ext_resource type="Script" path="res://Scripts/Menu.gd" id="1_17ss8"]
+[ext_resource type="Texture2D" uid="uid://cel6m0ig5t77n" path="res://Songs/Shiwa/bg.jpg" id="2_qtwkb"]
 
 [node name="Menu" type="Control"]
 layout_mode = 3
@@ -11,6 +12,18 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_17ss8")
 
+[node name="BG" type="TextureRect" parent="."]
+self_modulate = Color(1, 1, 1, 0.392157)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_qtwkb")
+expand_mode = 1
+metadata/_edit_use_anchors_ = true
+
 [node name="SongsList" type="ItemList" parent="."]
 layout_mode = 1
 anchors_preset = 8
@@ -18,9 +31,13 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -241.0
-offset_top = -160.0
-offset_right = 241.0
-offset_bottom = 160.0
+offset_left = -242.0
+offset_top = -126.0
+offset_right = 240.0
+offset_bottom = 194.0
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
+
+[connection signal="item_selected" from="SongsList" to="." method="_on_songs_list_item_selected"]
