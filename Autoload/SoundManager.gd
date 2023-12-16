@@ -2,6 +2,7 @@ extends Node
 
 @onready var hitSound : AudioStreamPlayer = $HitSound
 @onready var comboBreak : AudioStreamPlayer = $ComboBreak
+@onready var failSound : AudioStreamPlayer = $FailSound
 @onready var audio : AudioStreamPlayer = $Audio
 
 @export var is_currently_playing : bool = false

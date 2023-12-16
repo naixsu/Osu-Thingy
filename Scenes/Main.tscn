@@ -92,6 +92,32 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.129412, 0.129412, 0.129412, 1)
 
+[node name="Prompt" type="CanvasLayer" parent="Layers"]
+visible = false
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Layers/Prompt"]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -115.5
+offset_top = -158.0
+offset_right = 115.5
+offset_bottom = -118.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/separation = 70
+
+[node name="Main Menu" type="Button" parent="Layers/Prompt/HBoxContainer"]
+layout_mode = 2
+text = "Main Menu
+"
+
+[node name="Restart" type="Button" parent="Layers/Prompt/HBoxContainer"]
+layout_mode = 2
+text = "Restart"
+
 [node name="Groups" type="Node2D" parent="."]
 
 [node name="NoteGroup" type="Node2D" parent="Groups"]
@@ -107,5 +133,12 @@ one_shot = true
 wait_time = 3.0
 one_shot = true
 
+[node name="PromptTimer" type="Timer" parent="Timers"]
+wait_time = 2.0
+one_shot = true
+
 [connection signal="resized" from="Layers/PlayArea/Area/ColorRect" to="." method="_on_area_resized"]
+[connection signal="pressed" from="Layers/Prompt/HBoxContainer/Main Menu" to="." method="_on_main_menu_pressed"]
+[connection signal="pressed" from="Layers/Prompt/HBoxContainer/Restart" to="." method="_on_restart_pressed"]
 [connection signal="timeout" from="Timers/MenuTimer" to="." method="_on_menu_timer_timeout"]
+[connection signal="timeout" from="Timers/PromptTimer" to="." method="_on_prompt_timer_timeout"]

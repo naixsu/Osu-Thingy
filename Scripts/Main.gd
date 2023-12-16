@@ -4,11 +4,14 @@ class_name Main
 @export var Note : PackedScene
 @export var Cursor : PackedScene
 
-@onready var noteGroup = $Groups/NoteGroup
+@onready var noteGroup : Node2D = $Groups/NoteGroup
 @onready var songTimer : Timer = $Timers/SongTimer
-@onready var playArea = $Layers/PlayArea/Area
-@onready var mapBG = $Layers/BG/MapBG
+@onready var playArea : Control = $Layers/PlayArea/Area
+@onready var mapBG : TextureRect = $Layers/BG/MapBG
 @onready var menuTimer : Timer = $Timers/MenuTimer
+@onready var promptTimer : Timer = $Timers/PromptTimer
+@onready var prompt : CanvasLayer = $Layers/Prompt
+
 
 
 var path = "D:\\osu!\\Songs"
@@ -36,20 +39,29 @@ var hitObjStart : float = 0.0
 var cursor : Node2D
 var isDead : bool = false
 var combo : int = 0
+var inPrompt : bool = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	SoundManager.connect("finished_song", finished_song)
 	set_up()
 
 func _process(_delta):
-	update_cursor_position()
+	if not isDead:
+		update_cursor_position()
 	
 	#print(get_viewport().get_visible_rect().size)
 
 func _physics_process(delta):
+	if inPrompt: return
 	
 	if isDead:
 		SoundManager.audio.stop()
+		if promptTimer.is_stopped():
+			Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+			cursor.queue_free()
+			promptTimer.start()
+			inPrompt = true
 		return
 
 	if index >= metadata["HitObjects"].size():
@@ -155,6 +167,55 @@ func read_osu_file(beatmap: String) -> void:
 					metadata["HitObjects"].append(data)
 	file.close()
 
+## Init vars
+func init_vars() -> void:
+	isDead = false
+	inPrompt = false
+	songLength = 0
+	metadata = {
+		"General" : {},
+		"Metadata": {},
+		"Difficulty": {},
+		"HitObjects": [],
+	}
+	timeElapsed = 0.015 # add 15s coz osu starts at 00:00:015
+	index = 0
+	timeMS = 0
+	timeDifference = 0
+	combo = 0
+
+## General setup function
+func set_up() -> void:
+	init_vars()
+	init_cursor()
+	get_play_area_size()
+	read_osu_file(BeatmapManager.beatmap)
+	
+	mapBG.set_texture(load(BeatmapManager.mapBG))
+	circleSize = float(metadata["Difficulty"]["CircleSize"])
+
+	SoundManager.audio.play()
+	# Get the song length in ms
+	songLength = get_song_length()
+	# Turn back timer to s from ms
+	songTimer.wait_time = songLength / 1000 
+	songTimer.start()
+	
+	# https://osu.ppy.sh/wiki/en/Beatmap/Approach_rate
+	# https://www.desmos.com/calculator/ha9h7as3hx
+	var objTime = metadata["HitObjects"][index]["time"]
+	var ar = metadata["Difficulty"]["ApproachRate"].to_float()
+	var preempt = 0
+
+	if ar < 5:
+		preempt = 1.2 + 0.6 * (5 - ar) / 5
+	elif ar == 5:
+		preempt = 1.2
+	else:
+		preempt = 1.2 - 0.75 * (ar - 5) / 5
+	preempt *= 1000
+	print("Duration for AR ", ar , " : ", preempt)
+	hitObjStart = preempt
 #endregion
 
 #region Slider stuff
@@ -335,6 +396,7 @@ func update_cursor_position() -> void:
 
 func dead() -> void:
 	isDead = true
+	
 
 ## Gets the current size of the playArea and also updates the offset
 func get_play_area_size() -> void:
@@ -348,37 +410,15 @@ func get_play_area_size() -> void:
 func finished_song() -> void:
 	print("Song finished")
 
-func set_up() -> void:
-	SoundManager.connect("finished_song", finished_song)
-	init_cursor()
-	get_play_area_size()
-	read_osu_file(BeatmapManager.beatmap)
-	
-	mapBG.set_texture(load(BeatmapManager.mapBG))
-	circleSize = float(metadata["Difficulty"]["CircleSize"])
-
-	SoundManager.audio.play()
-	# Get the song length in ms
-	songLength = get_song_length()
-	# Turn back timer to s from ms
-	songTimer.wait_time = songLength / 1000 
-	songTimer.start()
-	
-	# https://osu.ppy.sh/wiki/en/Beatmap/Approach_rate
-	# https://www.desmos.com/calculator/ha9h7as3hx
-	var objTime = metadata["HitObjects"][index]["time"]
-	var ar = metadata["Difficulty"]["ApproachRate"].to_float()
-	var preempt = 0
-
-	if ar < 5:
-		preempt = 1.2 + 0.6 * (5 - ar) / 5
-	elif ar == 5:
-		preempt = 1.2
-	else:
-		preempt = 1.2 - 0.75 * (ar - 5) / 5
-	preempt *= 1000
-	print("Duration for AR ", ar , " : ", preempt)
-	hitObjStart = preempt
+func go_to_menu() -> void:
+	var root = get_tree().get_root()
+	var menuScene = root.get_node("Menu")
+	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+	menuScene.show()
+	menuScene.init_song_list()
+	#var scene = load("res://Scenes/Menu.tscn").instantiate()
+	#get_tree().root.add_child(scene)
+	self.queue_free()
 #endregion
 
 
@@ -388,10 +428,21 @@ func _on_area_resized():
 	
 func _on_menu_timer_timeout():
 	print("Go to menu")
-	var root = get_tree().get_root()
-	var menuScene = root.get_node("Menu")
-	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
-	menuScene.show()
-	self.queue_free()
+	go_to_menu()
 
+func _on_prompt_timer_timeout():
+	prompt.show()
+
+func _on_main_menu_pressed():
+	go_to_menu()
+
+func _on_restart_pressed():
+	prompt.hide()
+	set_up()
+
+	
 #endregion
+
+
+
+

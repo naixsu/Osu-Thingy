@@ -1,7 +1,7 @@
 extends Control
 
-@onready var songsList = $SongsList
-@onready var bg = $BG
+@onready var songsList : ItemList = $SongsList
+@onready var bg : TextureRect = $BG
 
 var songsListIndex : int = 0
 var selectedSongPath : String = ""
@@ -16,7 +16,7 @@ func _ready():
 
 ## Initializes the SongsList list with songs under the 'Songs/' directory
 func init_song_list() -> void:
-	
+	clear_song_list()
 	var songs = BeatmapManager.read_songs_directory()
 	
 	for song in songs:
@@ -27,6 +27,11 @@ func init_song_list() -> void:
 	set_selected_beatmap()
 	
 	play_selected_song()
+
+## Clear song list if populated
+func clear_song_list() -> void:
+	songsList.clear()
+		
 
 ## Set bg to be displayed given the selected song
 func set_selected_bg() -> void:
@@ -98,5 +103,7 @@ func _on_play_button_pressed():
 	#var scene = load("res://Scenes/Testing/NaixTestScenes/TestMultiplayerScene.tscn").instantiate()
 	SoundManager.stop_current_audio()
 	var scene = load("res://Scenes/Main.tscn").instantiate()
+	scene.name = "Main"
 	get_tree().root.add_child(scene)
 	self.hide()
+	#self.queue_free()
