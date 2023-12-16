@@ -4,8 +4,6 @@ class_name Main
 @export var Note : PackedScene
 @export var Cursor : PackedScene
 
-@export var beatmaps : Array[Resource]
-
 @onready var noteGroup = $NoteGroup
 @onready var audio : AudioStreamPlayer2D = $Audio
 @onready var songTimer : Timer = $SongTimer
