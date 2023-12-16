@@ -2,17 +2,26 @@ extends Node
 
 @onready var hitSound = $HitSound
 @onready var comboBreak = $ComboBreak
-@onready var music = $Music
+@onready var audio = $Audio
 
 @export var is_currently_playing : bool = false
 @export var current_music : String = ""
 
-func play(audioPath: String):
+
+## Plays the audio given an audioPath
+func play(audioPath: String) -> void:
+	stop_current_audio()
 	var localizeAudioPath = ProjectSettings.localize_path(audioPath)
-	music.stream = load(localizeAudioPath)
-	music.play()
+	audio.stream = load(localizeAudioPath)
+	audio.play()
 	#started.emit()
-	self.is_currently_playing = true
-	self.current_music = localizeAudioPath
+	is_currently_playing = true
+	current_music = localizeAudioPath
 	
-	print("AudioManager ", self.current_music)
+	print("AudioManager ", current_music)
+
+## Stops the current playing audio if any
+func stop_current_audio() -> void:
+	if audio.is_playing():
+		print("AUdioManager stopped playing, ", current_music)
+		audio.stop()

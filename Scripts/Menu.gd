@@ -27,6 +27,7 @@ func init_song_list() -> void:
 ## Helper function to set the song path to the selected song
 func set_selected_song_path() -> void:
 	selectedSongPath = songsList.get_item_text(songsListIndex)
+	play_selected_song()
 
 ## Plays the selected song
 func play_selected_song() -> void:
