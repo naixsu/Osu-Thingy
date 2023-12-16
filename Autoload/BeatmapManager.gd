@@ -1,11 +1,11 @@
 extends Node
 
+@export_file("*.txt") var beatmap 
 
 var songsDirPath : String = "Songs/"
 var songsDir : DirAccess
 var songsListIndex : int = 0
 var selectedSongPath : String = ""
-
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -27,3 +27,7 @@ func read_directory(dir: DirAccess) -> PackedStringArray:
 ## General function to concat files
 func concat_paths(paths: Array) -> String:
 	return "/".join(paths)
+
+func set_beatmap(beatmapPath: String) -> void:
+	var localizePath = ProjectSettings.localize_path(beatmapPath)
+	beatmap = localizePath

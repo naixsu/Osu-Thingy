@@ -39,21 +39,11 @@ var combo : int = 0
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	init_cursor()
-	
-	# TODO: Maps to investigate, coz way too desynced
-	# Shiwa is alright but a bit desynced
-	# Honesty
-	# Torinoko City
-	
-	var i = 1
-	var mp3 : AudioStream = beatmaps[i].mp3
-	var beatmap = beatmaps[i].beatmap
-	
-	read_osu_file(beatmap)
+
+	read_osu_file(BeatmapManager.beatmap)
 	circleSize = float(metadata["Difficulty"]["CircleSize"])
 	#print(metadata["Difficulty"])
-	set_audio_stream(mp3)
-	audio.play()
+	SoundManager.audio.play()
 	# Get the song length in ms
 	songLength = get_song_length()
 	# Turn back timer to s from ms
@@ -92,7 +82,7 @@ func _process(_delta):
 func _physics_process(delta):
 	
 	if isDead:
-		audio.stop()
+		SoundManager.audio.stop()
 		return
 
 	if index >= metadata["HitObjects"].size():
@@ -114,7 +104,7 @@ func _physics_process(delta):
 	#print(timeMS, " - ", timeOffset, " - ", timeDifference)
 	
 	if timeDifference <= threshold:
-		print("else timeDifference ", timeDifference)
+		#print("else timeDifference ", timeDifference)
 		place_single_object(metadata["HitObjects"][index])
 		index += 1
 		
@@ -130,13 +120,9 @@ func init_cursor() -> void:
 	cursor.connect("dead", dead)
 	add_child(cursor)
 
-## Set the AudioStreamPlayer's stream
-func set_audio_stream(mp3: AudioStream) -> void:
-	audio.set_stream(mp3)
-
 ## Set the song length in s to ms
 func get_song_length() -> int:
-	var length: float = audio.stream.get_length()
+	var length: float = SoundManager.audio.stream.get_length()
 	var ms: int = length * 1000
 	return ms
 
