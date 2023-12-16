@@ -14,3 +14,6 @@ volume_db = -10.0
 [node name="ComboBreak" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("3_hsm8w")
 volume_db = -10.0
+
+[node name="Music" type="AudioStreamPlayer2D" parent="."]
+volume_db = -10.0

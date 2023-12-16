@@ -20,7 +20,6 @@ config/icon="res://icon.svg"
 SoundManager="*res://Autoload/SoundManager.tscn"
 BulletManager="*res://Autoload/BulletManager.tscn"
 BeatmapManager="*res://Autoload/BeatmapManager.gd"
-AudioManager="*res://Autoload/AudioManager.gd"
 
 [physics]
 

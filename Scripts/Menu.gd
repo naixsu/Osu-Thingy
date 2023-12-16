@@ -42,7 +42,7 @@ func play_selected_song() -> void:
 	var songPath = BeatmapManager.concat_paths([
 		songDirPath, songFile
 	])
-	AudioManager.play(songPath)
+	SoundManager.play(songPath)
 
 
 func _on_songs_list_item_selected(index):
