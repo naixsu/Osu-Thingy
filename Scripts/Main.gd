@@ -5,12 +5,12 @@ class_name Main
 @export var Cursor : PackedScene
 
 @onready var noteGroup = $NoteGroup
-@onready var audio : AudioStreamPlayer2D = $Audio
 @onready var songTimer : Timer = $SongTimer
 
 var path = "D:\\osu!\\Songs"
 var OGPlayArea : Vector2 = Vector2(512, 384)
 var offset : Vector2 = Vector2(408, 196)
+#var offset : Vector2 = Vector2(640, 264)
 var playArea : Vector2 = Vector2(920, 580)
 var songLength : float = 0
 var metadata : Dictionary = {
@@ -273,7 +273,7 @@ func place_single_object(obj: Dictionary) -> void:
 	note.approachCircleTimer.start()
 	
 	note.global_position = scaledXY
-	note.scale = Vector2(circleSize - 1, circleSize - 1)
+	note.scale = Vector2(circleSize, circleSize)
 	
 	if type == 6 or type == 5:
 		combo = 1
