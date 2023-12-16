@@ -21,6 +21,10 @@ SoundManager="*res://Autoload/SoundManager.tscn"
 BulletManager="*res://Autoload/BulletManager.tscn"
 BeatmapManager="*res://Autoload/BeatmapManager.gd"
 
+[display]
+
+window/size/resizable=false
+
 [physics]
 
 common/physics_ticks_per_second=240

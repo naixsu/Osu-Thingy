@@ -4,14 +4,20 @@ class_name Main
 @export var Note : PackedScene
 @export var Cursor : PackedScene
 
-@onready var noteGroup = $NoteGroup
-@onready var audio : AudioStreamPlayer2D = $Audio
-@onready var songTimer : Timer = $SongTimer
+@onready var noteGroup : Node2D = $Groups/NoteGroup
+@onready var songTimer : Timer = $Timers/SongTimer
+@onready var playArea : Control = $Layers/PlayArea/Area
+@onready var mapBG : TextureRect = $Layers/BG/MapBG
+@onready var menuTimer : Timer = $Timers/MenuTimer
+@onready var promptTimer : Timer = $Timers/PromptTimer
+@onready var prompt : CanvasLayer = $Layers/Prompt
+
+
 
 var path = "D:\\osu!\\Songs"
 var OGPlayArea : Vector2 = Vector2(512, 384)
-var offset : Vector2 = Vector2(408, 196)
-var playArea : Vector2 = Vector2(920, 580)
+var offset : Vector2 
+var offsetDifference : Vector2
 var songLength : float = 0
 var metadata : Dictionary = {
 	"General" : {},
@@ -33,58 +39,35 @@ var hitObjStart : float = 0.0
 var cursor : Node2D
 var isDead : bool = false
 var combo : int = 0
+var inPrompt : bool = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	init_cursor()
-
-	read_osu_file(BeatmapManager.beatmap)
-	circleSize = float(metadata["Difficulty"]["CircleSize"])
-	#print(metadata["Difficulty"])
-	SoundManager.audio.play()
-	# Get the song length in ms
-	songLength = get_song_length()
-	# Turn back timer to s from ms
-	songTimer.wait_time = songLength / 1000 
-	songTimer.start()
-	#place_obects(metadata["HitObjects"])
-	#print(metadata["HitObjects"].size())
-	
-	# https://osu.ppy.sh/wiki/en/Beatmap/Approach_rate
-	# https://www.desmos.com/calculator/ha9h7as3hx
-	var objTime = metadata["HitObjects"][index]["time"]
-	var ar = metadata["Difficulty"]["ApproachRate"].to_float()
-	var preempt = 0
-	#if ar < 5:
-		#preempt = 0.8 + 0.4 * (5 - ar) / 5
-	#elif ar == 5:
-		#preempt = 0.8
-	#else:
-		#preempt = 0.8 - 0.5 * (ar - 5) / 5
-	if ar < 5:
-		preempt = 1.2 + 0.6 * (5 - ar) / 5
-	elif ar == 5:
-		preempt = 1.2
-	else:
-		preempt = 1.2 - 0.75 * (ar - 5) / 5
-	preempt *= 1000
-	print(preempt)
-
-
-	print("Duration for AR ", ar , " : ", preempt)
-	hitObjStart = preempt
+	SoundManager.connect("finished_song", finished_song)
+	set_up()
 
 func _process(_delta):
-	update_cursor_position()
+	if not isDead:
+		update_cursor_position()
+	
+	#print(get_viewport().get_visible_rect().size)
 
 func _physics_process(delta):
+	if inPrompt: return
 	
 	if isDead:
 		SoundManager.audio.stop()
+		if promptTimer.is_stopped():
+			Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+			cursor.queue_free()
+			promptTimer.start()
+			inPrompt = true
 		return
 
 	if index >= metadata["HitObjects"].size():
 		print("Stop")
+		if menuTimer.is_stopped():
+			menuTimer.start()
 		return
 
 		
@@ -184,6 +167,55 @@ func read_osu_file(beatmap: String) -> void:
 					metadata["HitObjects"].append(data)
 	file.close()
 
+## Init vars
+func init_vars() -> void:
+	isDead = false
+	inPrompt = false
+	songLength = 0
+	metadata = {
+		"General" : {},
+		"Metadata": {},
+		"Difficulty": {},
+		"HitObjects": [],
+	}
+	timeElapsed = 0.015 # add 15s coz osu starts at 00:00:015
+	index = 0
+	timeMS = 0
+	timeDifference = 0
+	combo = 0
+
+## General setup function
+func set_up() -> void:
+	init_vars()
+	init_cursor()
+	get_play_area_size()
+	read_osu_file(BeatmapManager.beatmap)
+	
+	mapBG.set_texture(load(BeatmapManager.mapBG))
+	circleSize = float(metadata["Difficulty"]["CircleSize"])
+
+	SoundManager.audio.play()
+	# Get the song length in ms
+	songLength = get_song_length()
+	# Turn back timer to s from ms
+	songTimer.wait_time = songLength / 1000 
+	songTimer.start()
+	
+	# https://osu.ppy.sh/wiki/en/Beatmap/Approach_rate
+	# https://www.desmos.com/calculator/ha9h7as3hx
+	var objTime = metadata["HitObjects"][index]["time"]
+	var ar = metadata["Difficulty"]["ApproachRate"].to_float()
+	var preempt = 0
+
+	if ar < 5:
+		preempt = 1.2 + 0.6 * (5 - ar) / 5
+	elif ar == 5:
+		preempt = 1.2
+	else:
+		preempt = 1.2 - 0.75 * (ar - 5) / 5
+	preempt *= 1000
+	print("Duration for AR ", ar , " : ", preempt)
+	hitObjStart = preempt
 #endregion
 
 #region Slider stuff
@@ -260,6 +292,8 @@ func place_single_object(obj: Dictionary) -> void:
 	var type = obj["type"]
 	var scaledXY = get_scale_coords(x, y)
 	
+	print(x, " ", y, " ", scaledXY.x, " ", scaledXY.y)
+	
 	var note = Note.instantiate()
 	noteGroup.add_child(note)
 	note.hitCircle.set_self_modulate(Color(1, 1, 1, 0))
@@ -273,7 +307,7 @@ func place_single_object(obj: Dictionary) -> void:
 	note.approachCircleTimer.start()
 	
 	note.global_position = scaledXY
-	note.scale = Vector2(circleSize - 1, circleSize - 1)
+	note.scale = Vector2(circleSize, circleSize)
 	
 	if type == 6 or type == 5:
 		combo = 1
@@ -331,7 +365,28 @@ func get_vector(point: String) -> Vector2:
 
 ## Get scaled coordinates given an (x, y)
 func get_scale_coords(x: int, y: int) -> Vector2:
-	return Vector2(x + offset.x, y + offset.y)
+	#return Vector2(x + offset.x, y + offset.y)
+	var scaledX = (x / OGPlayArea.x) * playArea.size.x + offsetDifference.x
+	var scaledY = (y / OGPlayArea.y) * playArea.size.y + offsetDifference.y
+	
+	return Vector2(scaledX, scaledY)
+
+
+func _scale_coordinates(original_x: float, original_y: float) -> Vector2:
+	var original_min_x = 0.0
+	var original_min_y = 0.0
+	var original_max_x = OGPlayArea.x
+	var original_max_y = OGPlayArea.y
+	
+	var target_min_x = offsetDifference.x
+	var target_max_x = playArea.size.x + offsetDifference.x
+	var target_min_y = offsetDifference.y
+	var target_max_y = playArea.size.y + offsetDifference.y
+	
+	var scaled_x = lerp(target_min_x, target_max_x, inverse_lerp(original_min_x, original_max_x, original_x))
+	var scaled_y = lerp(target_min_y, target_max_y, inverse_lerp(original_min_y, original_max_y, original_y))
+	
+	return Vector2(scaled_x, scaled_y)
 
 ## Update cursor position and clamps it based on the playArea
 func update_cursor_position() -> void:
@@ -341,7 +396,53 @@ func update_cursor_position() -> void:
 
 func dead() -> void:
 	isDead = true
-
 	
 
+## Gets the current size of the playArea and also updates the offset
+func get_play_area_size() -> void:
+	if playArea != null:
+		print(playArea.size)
+		offset = playArea.size - OGPlayArea
+		offsetDifference = playArea.position
+		print("offset ", offset)
+		print("offsetDifference ", offsetDifference)
+
+func finished_song() -> void:
+	print("Song finished")
+
+func go_to_menu() -> void:
+	var root = get_tree().get_root()
+	var menuScene = root.get_node("Menu")
+	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+	menuScene.show()
+	menuScene.init_song_list()
+	#var scene = load("res://Scenes/Menu.tscn").instantiate()
+	#get_tree().root.add_child(scene)
+	self.queue_free()
 #endregion
+
+
+#region Signals
+func _on_area_resized():
+	get_play_area_size()
+	
+func _on_menu_timer_timeout():
+	print("Go to menu")
+	go_to_menu()
+
+func _on_prompt_timer_timeout():
+	prompt.show()
+
+func _on_main_menu_pressed():
+	go_to_menu()
+
+func _on_restart_pressed():
+	prompt.hide()
+	set_up()
+
+	
+#endregion
+
+
+
+

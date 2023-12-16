@@ -12,6 +12,7 @@ signal dead
 var health : int = 100
 var isDead : bool = false
 var maxHP : int = 100
+var soundPlayed : bool = false
 
 func _process(_delta):
 	healthLabel.text = str(health)
@@ -30,5 +31,8 @@ func restore_health(hp: int) -> void:
 
 func check_if_dead() -> void:
 	if health <= 0:
+		if not soundPlayed:
+			SoundManager.failSound.play()
+			soundPlayed = true
 		collision.disabled = true
 		dead.emit()
