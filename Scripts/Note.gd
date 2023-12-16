@@ -52,5 +52,6 @@ func _on_area_2d_area_exited(area):
 func hit_note():
 	if cursor.hitTimer.is_stopped():
 		cursor.hitTimer.start()
+		cursor.restore_health(5)
 		SoundManager.hitSound.play()
 		queue_free()

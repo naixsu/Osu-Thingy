@@ -11,6 +11,7 @@ signal dead
 
 var health : int = 100
 var isDead : bool = false
+var maxHP : int = 100
 
 func _process(_delta):
 	healthLabel.text = str(health)
@@ -22,7 +23,10 @@ func handle_hit(dmg: int) -> void:
 	health -= dmg
 
 func restore_health(hp: int) -> void:
-	health += hp
+	if health + hp >= maxHP:
+		health = maxHP
+	else:
+		health += hp
 
 func check_if_dead() -> void:
 	if health <= 0:
