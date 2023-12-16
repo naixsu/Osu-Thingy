@@ -113,32 +113,7 @@ func _physics_process(delta):
 	
 	#print(timeMS, " - ", timeOffset, " - ", timeDifference)
 	
-	
-	# TODO: Optimize this
-	# essentially gets the least time difference possible
-	# to instantiate the note as close to the 
-	# object time as possible
-	if timeDifference <= 1:
-		print(timeMS, " : ", timeOffset, " : ", timeDifference)
-		place_single_object(metadata["HitObjects"][index])
-		index += 1
-	elif timeDifference <= 2:
-		print(timeMS, " : ", timeOffset, " : ", timeDifference)
-		place_single_object(metadata["HitObjects"][index])
-		index += 1
-	elif timeDifference <= 3:
-		print(timeMS, " : ", timeOffset, " : ", timeDifference)
-		place_single_object(metadata["HitObjects"][index])
-		index += 1
-	elif timeDifference <= 4:
-		print(timeMS, " : ", timeOffset, " : ", timeDifference)
-		place_single_object(metadata["HitObjects"][index])
-		index += 1
-	elif timeDifference <= 5:
-		print(timeMS, " : ", timeOffset, " : ", timeDifference)
-		place_single_object(metadata["HitObjects"][index])
-		index += 1
-	elif timeDifference <= threshold:
+	if timeDifference <= threshold:
 		print("else timeDifference ", timeDifference)
 		place_single_object(metadata["HitObjects"][index])
 		index += 1
