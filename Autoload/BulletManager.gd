@@ -5,7 +5,7 @@ extends Node2D
 ## Spawns bullets
 func spawn_bullets(notePos : Vector2) -> void:
 	var root = get_tree().get_root()
-	var bulletGroup = root.get_node("Main/BulletGroup")
+	var bulletGroup = root.get_node("Main/Groups/BulletGroup")
 	
 	# Classic pattern: 8 bullets
 	var numBullets = 8  # Number of bullets (360 degrees / 45 degrees)

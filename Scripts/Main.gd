@@ -4,9 +4,10 @@ class_name Main
 @export var Note : PackedScene
 @export var Cursor : PackedScene
 
-@onready var noteGroup = $NoteGroup
-@onready var songTimer : Timer = $SongTimer
-@onready var playArea = $PlayArea/Area
+@onready var noteGroup = $Groups/NoteGroup
+@onready var songTimer : Timer = $Timers/SongTimer
+@onready var playArea = $Layers/PlayArea/Area
+@onready var mapBG = $Layers/BG/MapBG
 
 
 
@@ -41,6 +42,7 @@ func _ready():
 	init_cursor()
 	get_play_area_size()
 	read_osu_file(BeatmapManager.beatmap)
+	mapBG.set_texture(load(BeatmapManager.mapBG))
 	circleSize = float(metadata["Difficulty"]["CircleSize"])
 	#print(metadata["Difficulty"])
 	SoundManager.audio.play()

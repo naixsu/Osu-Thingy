@@ -1,7 +1,8 @@
-[gd_scene load_steps=4 format=3 uid="uid://bil3o66huds7t"]
+[gd_scene load_steps=5 format=3 uid="uid://bil3o66huds7t"]
 
 [ext_resource type="Script" path="res://Scripts/Main.gd" id="1_w7xk5"]
 [ext_resource type="PackedScene" uid="uid://c10nf1ln4qv1t" path="res://Scenes/Note.tscn" id="2_e5mop"]
+[ext_resource type="Texture2D" uid="uid://cel6m0ig5t77n" path="res://Songs/Shiwa/bg.jpg" id="4_4yihe"]
 [ext_resource type="PackedScene" uid="uid://0xsjwouo75yi" path="res://Scenes/Cursor.tscn" id="4_8uebw"]
 
 [node name="Main" type="Node2D"]
@@ -27,34 +28,49 @@ color = Color(0.972549, 0.823529, 0.572549, 0.196078)
 [node name="Marker2D" type="Marker2D" parent="DebugOGArea"]
 position = Vector2(256, 192)
 
-[node name="PlayArea" type="CanvasLayer" parent="."]
+[node name="Layers" type="Node" parent="."]
+
+[node name="BG" type="CanvasLayer" parent="Layers"]
 layer = -5
 
-[node name="DebugMarkers" type="Node2D" parent="PlayArea"]
+[node name="MapBG" type="TextureRect" parent="Layers/BG"]
+self_modulate = Color(1, 1, 1, 0.392157)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("4_4yihe")
+expand_mode = 1
+
+[node name="PlayArea" type="CanvasLayer" parent="Layers"]
+layer = -5
+
+[node name="DebugMarkers" type="Node2D" parent="Layers/PlayArea"]
 visible = false
 
-[node name="Marker2D" type="Marker2D" parent="PlayArea/DebugMarkers"]
+[node name="Marker2D" type="Marker2D" parent="Layers/PlayArea/DebugMarkers"]
 position = Vector2(1152, 648)
 
-[node name="Center" type="Marker2D" parent="PlayArea/DebugMarkers"]
+[node name="Center" type="Marker2D" parent="Layers/PlayArea/DebugMarkers"]
 position = Vector2(576, 324)
 
-[node name="Marker2D2" type="Marker2D" parent="PlayArea/DebugMarkers"]
+[node name="Marker2D2" type="Marker2D" parent="Layers/PlayArea/DebugMarkers"]
 position = Vector2(116, 34)
 
-[node name="Marker2D3" type="Marker2D" parent="PlayArea/DebugMarkers"]
+[node name="Marker2D3" type="Marker2D" parent="Layers/PlayArea/DebugMarkers"]
 position = Vector2(1036, 614)
 
-[node name="Marker2D4" type="Marker2D" parent="PlayArea/DebugMarkers"]
+[node name="Marker2D4" type="Marker2D" parent="Layers/PlayArea/DebugMarkers"]
 position = Vector2(920, 580)
 
-[node name="OG note" type="Marker2D" parent="PlayArea/DebugMarkers"]
+[node name="OG note" type="Marker2D" parent="Layers/PlayArea/DebugMarkers"]
 position = Vector2(120, 266)
 
-[node name="Scaled note" type="Marker2D" parent="PlayArea/DebugMarkers"]
+[node name="Scaled note" type="Marker2D" parent="Layers/PlayArea/DebugMarkers"]
 position = Vector2(331, 435)
 
-[node name="Area" type="Control" parent="PlayArea"]
+[node name="Area" type="Control" parent="Layers/PlayArea"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -66,7 +82,8 @@ offset_bottom = -60.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="ColorRect" type="ColorRect" parent="PlayArea/Area"]
+[node name="ColorRect" type="ColorRect" parent="Layers/PlayArea/Area"]
+self_modulate = Color(1, 1, 1, 0.862745)
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -75,11 +92,15 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.129412, 0.129412, 0.129412, 1)
 
-[node name="NoteGroup" type="Node2D" parent="."]
+[node name="Groups" type="Node2D" parent="."]
 
-[node name="BulletGroup" type="Node2D" parent="."]
+[node name="NoteGroup" type="Node2D" parent="Groups"]
 
-[node name="SongTimer" type="Timer" parent="."]
+[node name="BulletGroup" type="Node2D" parent="Groups"]
+
+[node name="Timers" type="Node" parent="."]
+
+[node name="SongTimer" type="Timer" parent="Timers"]
 one_shot = true
 
-[connection signal="resized" from="PlayArea/Area/ColorRect" to="." method="_on_area_resized"]
+[connection signal="resized" from="Layers/PlayArea/Area/ColorRect" to="." method="_on_area_resized"]
