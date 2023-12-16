@@ -15,7 +15,11 @@ layer = -5
 [node name="Marker2D" type="Marker2D" parent="PlayArea"]
 position = Vector2(1152, 648)
 
-[node name="Panel" type="Panel" parent="PlayArea"]
+[node name="Marker2D2" type="Marker2D" parent="PlayArea"]
+position = Vector2(116, 34)
+
+[node name="Area" type="Control" parent="PlayArea"]
+layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -25,7 +29,15 @@ offset_right = -116.0
 offset_bottom = -34.0
 grow_horizontal = 2
 grow_vertical = 2
-metadata/_edit_use_anchors_ = true
+
+[node name="ColorRect" type="ColorRect" parent="PlayArea/Area"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.129412, 0.129412, 0.129412, 1)
 
 [node name="NoteGroup" type="Node2D" parent="."]
 
@@ -33,3 +45,6 @@ metadata/_edit_use_anchors_ = true
 
 [node name="SongTimer" type="Timer" parent="."]
 one_shot = true
+
+[connection signal="item_rect_changed" from="PlayArea/Area/ColorRect" to="." method="_on_area_item_rect_changed"]
+[connection signal="resized" from="PlayArea/Area/ColorRect" to="." method="_on_area_resized"]

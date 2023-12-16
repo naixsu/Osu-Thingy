@@ -6,12 +6,15 @@ class_name Main
 
 @onready var noteGroup = $NoteGroup
 @onready var songTimer : Timer = $SongTimer
+@onready var playArea = $PlayArea/Area
+
+
 
 var path = "D:\\osu!\\Songs"
 var OGPlayArea : Vector2 = Vector2(512, 384)
 var offset : Vector2 = Vector2(408, 196)
 #var offset : Vector2 = Vector2(640, 264)
-var playArea : Vector2 = Vector2(920, 580)
+#var playArea : Vector2 = Vector2(920, 580)
 var songLength : float = 0
 var metadata : Dictionary = {
 	"General" : {},
@@ -37,7 +40,7 @@ var combo : int = 0
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	init_cursor()
-
+	get_play_area_size()
 	read_osu_file(BeatmapManager.beatmap)
 	circleSize = float(metadata["Difficulty"]["CircleSize"])
 	#print(metadata["Difficulty"])
@@ -76,6 +79,8 @@ func _ready():
 
 func _process(_delta):
 	update_cursor_position()
+	
+	#print(get_viewport().get_visible_rect().size)
 
 func _physics_process(delta):
 	
@@ -342,6 +347,20 @@ func update_cursor_position() -> void:
 func dead() -> void:
 	isDead = true
 
-	
-
+func get_play_area_size() -> void:
+	if playArea != null:
+		#print(playArea.size)
+		offset = playArea.size - OGPlayArea
+		
 #endregion
+
+
+func _on_area_resized():
+	print("Area resized")
+	get_play_area_size()
+	pass # Replace with function body.
+
+
+func _on_area_item_rect_changed():
+	print("Rect changed")
+	pass # Replace with function body.
