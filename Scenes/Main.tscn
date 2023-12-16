@@ -103,4 +103,9 @@ color = Color(0.129412, 0.129412, 0.129412, 1)
 [node name="SongTimer" type="Timer" parent="Timers"]
 one_shot = true
 
+[node name="MenuTimer" type="Timer" parent="Timers"]
+wait_time = 3.0
+one_shot = true
+
 [connection signal="resized" from="Layers/PlayArea/Area/ColorRect" to="." method="_on_area_resized"]
+[connection signal="timeout" from="Timers/MenuTimer" to="." method="_on_menu_timer_timeout"]

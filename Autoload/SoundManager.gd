@@ -1,12 +1,13 @@
 extends Node
 
-@onready var hitSound = $HitSound
-@onready var comboBreak = $ComboBreak
-@onready var audio = $Audio
+@onready var hitSound : AudioStreamPlayer = $HitSound
+@onready var comboBreak : AudioStreamPlayer = $ComboBreak
+@onready var audio : AudioStreamPlayer = $Audio
 
 @export var is_currently_playing : bool = false
 @export var current_music : String = ""
 
+signal finished_song
 
 ## Plays the audio given an audioPath
 func play(audioPath: String) -> void:
@@ -25,3 +26,7 @@ func stop_current_audio() -> void:
 	if audio.is_playing():
 		#print("AUdioManager stopped playing, ", current_music)
 		audio.stop()
+
+
+func _on_audio_finished():
+	finished_song.emit()

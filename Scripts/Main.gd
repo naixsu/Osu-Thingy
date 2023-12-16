@@ -8,7 +8,7 @@ class_name Main
 @onready var songTimer : Timer = $Timers/SongTimer
 @onready var playArea = $Layers/PlayArea/Area
 @onready var mapBG = $Layers/BG/MapBG
-
+@onready var menuTimer : Timer = $Timers/MenuTimer
 
 
 var path = "D:\\osu!\\Songs"
@@ -39,44 +39,7 @@ var combo : int = 0
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	init_cursor()
-	get_play_area_size()
-	read_osu_file(BeatmapManager.beatmap)
-	mapBG.set_texture(load(BeatmapManager.mapBG))
-	circleSize = float(metadata["Difficulty"]["CircleSize"])
-	#print(metadata["Difficulty"])
-	SoundManager.audio.play()
-	# Get the song length in ms
-	songLength = get_song_length()
-	# Turn back timer to s from ms
-	songTimer.wait_time = songLength / 1000 
-	songTimer.start()
-	#place_obects(metadata["HitObjects"])
-	#print(metadata["HitObjects"].size())
-	
-	# https://osu.ppy.sh/wiki/en/Beatmap/Approach_rate
-	# https://www.desmos.com/calculator/ha9h7as3hx
-	var objTime = metadata["HitObjects"][index]["time"]
-	var ar = metadata["Difficulty"]["ApproachRate"].to_float()
-	var preempt = 0
-	#if ar < 5:
-		#preempt = 0.8 + 0.4 * (5 - ar) / 5
-	#elif ar == 5:
-		#preempt = 0.8
-	#else:
-		#preempt = 0.8 - 0.5 * (ar - 5) / 5
-	if ar < 5:
-		preempt = 1.2 + 0.6 * (5 - ar) / 5
-	elif ar == 5:
-		preempt = 1.2
-	else:
-		preempt = 1.2 - 0.75 * (ar - 5) / 5
-	preempt *= 1000
-	print(preempt)
-
-
-	print("Duration for AR ", ar , " : ", preempt)
-	hitObjStart = preempt
+	set_up()
 
 func _process(_delta):
 	update_cursor_position()
@@ -91,6 +54,8 @@ func _physics_process(delta):
 
 	if index >= metadata["HitObjects"].size():
 		print("Stop")
+		if menuTimer.is_stopped():
+			menuTimer.start()
 		return
 
 		
@@ -379,12 +344,54 @@ func get_play_area_size() -> void:
 		offsetDifference = playArea.position
 		print("offset ", offset)
 		print("offsetDifference ", offsetDifference)
-		
+
+func finished_song() -> void:
+	print("Song finished")
+
+func set_up() -> void:
+	SoundManager.connect("finished_song", finished_song)
+	init_cursor()
+	get_play_area_size()
+	read_osu_file(BeatmapManager.beatmap)
+	
+	mapBG.set_texture(load(BeatmapManager.mapBG))
+	circleSize = float(metadata["Difficulty"]["CircleSize"])
+
+	SoundManager.audio.play()
+	# Get the song length in ms
+	songLength = get_song_length()
+	# Turn back timer to s from ms
+	songTimer.wait_time = songLength / 1000 
+	songTimer.start()
+	
+	# https://osu.ppy.sh/wiki/en/Beatmap/Approach_rate
+	# https://www.desmos.com/calculator/ha9h7as3hx
+	var objTime = metadata["HitObjects"][index]["time"]
+	var ar = metadata["Difficulty"]["ApproachRate"].to_float()
+	var preempt = 0
+
+	if ar < 5:
+		preempt = 1.2 + 0.6 * (5 - ar) / 5
+	elif ar == 5:
+		preempt = 1.2
+	else:
+		preempt = 1.2 - 0.75 * (ar - 5) / 5
+	preempt *= 1000
+	print("Duration for AR ", ar , " : ", preempt)
+	hitObjStart = preempt
 #endregion
 
 
 #region Signals
 func _on_area_resized():
 	get_play_area_size()
+	
+func _on_menu_timer_timeout():
+	print("Go to menu")
+	var root = get_tree().get_root()
+	var menuScene = root.get_node("Menu")
+	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+	menuScene.show()
+	self.queue_free()
 
 #endregion
