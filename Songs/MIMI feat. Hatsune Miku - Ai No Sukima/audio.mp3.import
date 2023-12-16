@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://cs77t6vpk7a8o"
+path="res://.godot/imported/audio.mp3-1bd5224d4edce9353c6021171573a189.mp3str"
+
+[deps]
+
+source_file="res://Songs/MIMI feat. Hatsune Miku - Ai No Sukima/audio.mp3"
+dest_files=["res://.godot/imported/audio.mp3-1bd5224d4edce9353c6021171573a189.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

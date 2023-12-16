@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://cbpt6co4th52t"
+path="res://.godot/imported/audio.mp3-b33847e4aa0f97232db384964c200284.mp3str"
+
+[deps]
+
+source_file="res://Songs/Yorushika - Elma/audio.mp3"
+dest_files=["res://.godot/imported/audio.mp3-b33847e4aa0f97232db384964c200284.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

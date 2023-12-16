@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://b5a4h1nyg28ed"
+path="res://.godot/imported/audio.mp3-41423b9edf9ed12649a2fb4f886cfb96.mp3str"
+
+[deps]
+
+source_file="res://Songs/DragonForce - Through the Fire and Flames/audio.mp3"
+dest_files=["res://.godot/imported/audio.mp3-41423b9edf9ed12649a2fb4f886cfb96.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

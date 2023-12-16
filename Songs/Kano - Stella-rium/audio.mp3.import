@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://jk7mh7bfmii4"
+path="res://.godot/imported/audio.mp3-1088f2401c48a573a641bebab7702db3.mp3str"
+
+[deps]
+
+source_file="res://Songs/Kano - Stella-rium/audio.mp3"
+dest_files=["res://.godot/imported/audio.mp3-1088f2401c48a573a641bebab7702db3.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4
