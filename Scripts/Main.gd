@@ -34,6 +34,7 @@ var sliderObj : Dictionary
 var hitObjStart : float = 0.0
 var cursor : Node2D
 var isDead : bool = false
+var combo : int = 0
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -314,6 +315,13 @@ func place_single_object(obj: Dictionary) -> void:
 	
 	note.global_position = scaledXY
 	note.scale = Vector2(circleSize - 1, circleSize - 1)
+	
+	if type == 6 or type == 5:
+		combo = 1
+	else:
+		combo += 1
+	
+	note.combo.text = str(combo)
 	
 	#if type == 2 or type == 6:
 		#place_slider(obj)
