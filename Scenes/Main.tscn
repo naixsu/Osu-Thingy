@@ -9,24 +9,60 @@ script = ExtResource("1_w7xk5")
 Note = ExtResource("2_e5mop")
 Cursor = ExtResource("4_8uebw")
 
+[node name="DebugOGArea" type="ColorRect" parent="."]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 224.0
+offset_top = 60.0
+offset_right = 928.0
+offset_bottom = 588.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.972549, 0.823529, 0.572549, 0.196078)
+
+[node name="Marker2D" type="Marker2D" parent="DebugOGArea"]
+position = Vector2(256, 192)
+
 [node name="PlayArea" type="CanvasLayer" parent="."]
 layer = -5
 
-[node name="Marker2D" type="Marker2D" parent="PlayArea"]
+[node name="DebugMarkers" type="Node2D" parent="PlayArea"]
+visible = false
+
+[node name="Marker2D" type="Marker2D" parent="PlayArea/DebugMarkers"]
 position = Vector2(1152, 648)
 
-[node name="Marker2D2" type="Marker2D" parent="PlayArea"]
+[node name="Center" type="Marker2D" parent="PlayArea/DebugMarkers"]
+position = Vector2(576, 324)
+
+[node name="Marker2D2" type="Marker2D" parent="PlayArea/DebugMarkers"]
 position = Vector2(116, 34)
+
+[node name="Marker2D3" type="Marker2D" parent="PlayArea/DebugMarkers"]
+position = Vector2(1036, 614)
+
+[node name="Marker2D4" type="Marker2D" parent="PlayArea/DebugMarkers"]
+position = Vector2(920, 580)
+
+[node name="OG note" type="Marker2D" parent="PlayArea/DebugMarkers"]
+position = Vector2(120, 266)
+
+[node name="Scaled note" type="Marker2D" parent="PlayArea/DebugMarkers"]
+position = Vector2(331, 435)
 
 [node name="Area" type="Control" parent="PlayArea"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 116.0
-offset_top = 34.0
-offset_right = -116.0
-offset_bottom = -34.0
+offset_left = 224.0
+offset_top = 60.0
+offset_right = -224.0
+offset_bottom = -60.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -46,5 +82,4 @@ color = Color(0.129412, 0.129412, 0.129412, 1)
 [node name="SongTimer" type="Timer" parent="."]
 one_shot = true
 
-[connection signal="item_rect_changed" from="PlayArea/Area/ColorRect" to="." method="_on_area_item_rect_changed"]
 [connection signal="resized" from="PlayArea/Area/ColorRect" to="." method="_on_area_resized"]

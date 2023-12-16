@@ -12,9 +12,8 @@ class_name Main
 
 var path = "D:\\osu!\\Songs"
 var OGPlayArea : Vector2 = Vector2(512, 384)
-var offset : Vector2 = Vector2(408, 196)
-#var offset : Vector2 = Vector2(640, 264)
-#var playArea : Vector2 = Vector2(920, 580)
+var offset : Vector2 
+var offsetDifference : Vector2
 var songLength : float = 0
 var metadata : Dictionary = {
 	"General" : {},
@@ -265,6 +264,8 @@ func place_single_object(obj: Dictionary) -> void:
 	var type = obj["type"]
 	var scaledXY = get_scale_coords(x, y)
 	
+	print(x, " ", y, " ", scaledXY.x, " ", scaledXY.y)
+	
 	var note = Note.instantiate()
 	noteGroup.add_child(note)
 	note.hitCircle.set_self_modulate(Color(1, 1, 1, 0))
@@ -336,7 +337,28 @@ func get_vector(point: String) -> Vector2:
 
 ## Get scaled coordinates given an (x, y)
 func get_scale_coords(x: int, y: int) -> Vector2:
-	return Vector2(x + offset.x, y + offset.y)
+	#return Vector2(x + offset.x, y + offset.y)
+	var scaledX = (x / OGPlayArea.x) * playArea.size.x + offsetDifference.x
+	var scaledY = (y / OGPlayArea.y) * playArea.size.y + offsetDifference.y
+	
+	return Vector2(scaledX, scaledY)
+
+
+func _scale_coordinates(original_x: float, original_y: float) -> Vector2:
+	var original_min_x = 0.0
+	var original_min_y = 0.0
+	var original_max_x = OGPlayArea.x
+	var original_max_y = OGPlayArea.y
+	
+	var target_min_x = offsetDifference.x
+	var target_max_x = playArea.size.x + offsetDifference.x
+	var target_min_y = offsetDifference.y
+	var target_max_y = playArea.size.y + offsetDifference.y
+	
+	var scaled_x = lerp(target_min_x, target_max_x, inverse_lerp(original_min_x, original_max_x, original_x))
+	var scaled_y = lerp(target_min_y, target_max_y, inverse_lerp(original_min_y, original_max_y, original_y))
+	
+	return Vector2(scaled_x, scaled_y)
 
 ## Update cursor position and clamps it based on the playArea
 func update_cursor_position() -> void:
@@ -347,20 +369,20 @@ func update_cursor_position() -> void:
 func dead() -> void:
 	isDead = true
 
+## Gets the current size of the playArea and also updates the offset
 func get_play_area_size() -> void:
 	if playArea != null:
-		#print(playArea.size)
+		print(playArea.size)
 		offset = playArea.size - OGPlayArea
+		offsetDifference = playArea.position
+		print("offset ", offset)
+		print("offsetDifference ", offsetDifference)
 		
 #endregion
 
 
+#region Signals
 func _on_area_resized():
-	print("Area resized")
 	get_play_area_size()
-	pass # Replace with function body.
 
-
-func _on_area_item_rect_changed():
-	print("Rect changed")
-	pass # Replace with function body.
+#endregion
