@@ -1,8 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://bil3o66huds7t"]
+[gd_scene load_steps=4 format=3 uid="uid://bil3o66huds7t"]
 
 [ext_resource type="Script" path="res://Scripts/Main.gd" id="1_w7xk5"]
 [ext_resource type="PackedScene" uid="uid://c10nf1ln4qv1t" path="res://Scenes/Note.tscn" id="2_e5mop"]
-[ext_resource type="Texture2D" uid="uid://cel6m0ig5t77n" path="res://Songs/Shiwa/bg.jpg" id="4_4yihe"]
 [ext_resource type="PackedScene" uid="uid://0xsjwouo75yi" path="res://Scenes/Cursor.tscn" id="4_8uebw"]
 
 [node name="Main" type="Node2D"]
@@ -40,7 +39,6 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("4_4yihe")
 expand_mode = 1
 
 [node name="PlayArea" type="CanvasLayer" parent="Layers"]

@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://bnc2f7seinwnl"
+path="res://.godot/imported/audio.mp3-ce75478956df85b55146abb4067c1ffe.mp3str"
+
+[deps]
+
+source_file="res://Songs/765 MILLION ALLSTARS - UNION!!/audio.mp3"
+dest_files=["res://.godot/imported/audio.mp3-ce75478956df85b55146abb4067c1ffe.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4
