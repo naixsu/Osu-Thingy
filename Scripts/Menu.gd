@@ -11,7 +11,7 @@ var beatmapPath : String = ""
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	init_song_list()
-	play_selected_song()
+	
 
 
 ## Initializes the SongsList list with songs under the 'Songs/' directory
@@ -25,6 +25,8 @@ func init_song_list() -> void:
 	set_selected_song_path()
 	set_selected_bg()
 	set_selected_beatmap()
+	
+	play_selected_song()
 
 ## Set bg to be displayed given the selected song
 func set_selected_bg() -> void:
