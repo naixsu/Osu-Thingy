@@ -72,3 +72,11 @@ func _on_songs_list_item_selected(index):
 	songsListIndex = index
 	set_selected_song_path()
 	set_selected_bg()
+
+
+func _on_play_button_pressed():
+	#var scene = load("res://Scenes/Testing/NaixTestScenes/TestMultiplayerScene.tscn").instantiate()
+	SoundManager.stop_current_audio()
+	var scene = load("res://Scenes/Main.tscn").instantiate()
+	get_tree().root.add_child(scene)
+	self.hide()
