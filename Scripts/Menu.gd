@@ -5,14 +5,13 @@ extends Control
 
 var songsListIndex : int = 0
 var selectedSongPath : String = ""
-
+var beatmapPath : String = ""
 
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	init_song_list()
 	
-	play_selected_song()
 
 
 ## Initializes the SongsList list with songs under the 'Songs/' directory
@@ -25,6 +24,9 @@ func init_song_list() -> void:
 	
 	set_selected_song_path()
 	set_selected_bg()
+	set_selected_beatmap()
+	
+	play_selected_song()
 
 ## Set bg to be displayed given the selected song
 func set_selected_bg() -> void:
@@ -32,9 +34,9 @@ func set_selected_bg() -> void:
 	var songDir = DirAccess.open(songDirPath)
 	var songs = BeatmapManager.read_directory(songDir)
 	var textureFile = ""
-	for bg in songs:
-		if bg.to_lower().ends_with(".jpg") or bg.to_lower().ends_with(".png"):
-			textureFile = bg
+	for file in songs:
+		if file.to_lower().ends_with(".jpg") or file.to_lower().ends_with(".png"):
+			textureFile = file
 	
 	var texturePath = BeatmapManager.concat_paths([
 		songDirPath, textureFile
@@ -57,21 +59,39 @@ func play_selected_song() -> void:
 	var songDir = DirAccess.open(songDirPath)
 	var songs = BeatmapManager.read_directory(songDir)
 	var songFile = ""
-	for song in songs:
-		if song.to_lower().ends_with(".mp3"):
-			songFile = song
+	for file in songs:
+		if file.to_lower().ends_with(".mp3"):
+			songFile = file
 	
-	#var songPath = songDirPath + songFile
 	var songPath = BeatmapManager.concat_paths([
 		songDirPath, songFile
 	])
 	SoundManager.play(songPath)
 
 
+## Set the selected beatmap to be also used by BeatmapManager
+func set_selected_beatmap() -> void:
+	var songDirPath = BeatmapManager.songsDirPath + selectedSongPath
+	var songDir = DirAccess.open(songDirPath)
+	var songs = BeatmapManager.read_directory(songDir)
+	var beatmapFile = ""
+	for file in songs:
+		if file.to_lower().ends_with(".txt"):
+			beatmapFile = file
+	
+	beatmapPath = BeatmapManager.concat_paths([
+		songDirPath, beatmapFile
+	])
+	
+	print(beatmapPath)
+	BeatmapManager.set_beatmap(beatmapPath)
+
 func _on_songs_list_item_selected(index):
 	songsListIndex = index
 	set_selected_song_path()
 	set_selected_bg()
+	set_selected_beatmap()
+
 
 
 func _on_play_button_pressed():
