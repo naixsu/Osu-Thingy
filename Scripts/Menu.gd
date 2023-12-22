@@ -2,10 +2,12 @@ extends Control
 
 @onready var songsList : ItemList = $SongsList
 @onready var bg : TextureRect = $BG
+@onready var songPickTimer : Timer = $Timers/SongPickTimer
 
 var songsListIndex : int = 0
 var selectedSongPath : String = ""
 var beatmapPath : String = ""
+var prevSongIndex : int = -1
 
 
 # Called when the node enters the scene tree for the first time.
@@ -91,19 +93,37 @@ func set_selected_beatmap() -> void:
 	#print(beatmapPath)
 	BeatmapManager.set_beatmap(songDirPath)
 
-func _on_songs_list_item_selected(index):
-	songsListIndex = index
-	set_selected_song_path()
-	set_selected_bg()
-	set_selected_beatmap()
+## Function to set the selected song on double click
+func set_selected_song() -> void:
+	if not songPickTimer.is_stopped() and prevSongIndex == songsListIndex:
+		play_game()
+	
+	
 
-
-
-func _on_play_button_pressed():
-	#var scene = load("res://Scenes/Testing/NaixTestScenes/TestMultiplayerScene.tscn").instantiate()
+func play_game() -> void:
 	SoundManager.stop_current_audio()
 	var scene = load("res://Scenes/Main.tscn").instantiate()
 	scene.name = "Main"
 	get_tree().root.add_child(scene)
 	self.hide()
+
+
+func _on_play_button_pressed():
+	#var scene = load("res://Scenes/Testing/NaixTestScenes/TestMultiplayerScene.tscn").instantiate()
+	play_game()
 	#self.queue_free()
+
+func _on_songs_list_item_clicked(index, at_position, mouse_button_index):
+	songPickTimer.start()
+	prevSongIndex = songsListIndex
+	songsListIndex = index
+	
+	if prevSongIndex == songsListIndex:
+		set_selected_song()
+		return
+		
+	set_selected_song_path()
+	set_selected_bg()
+	set_selected_beatmap()
+	
+
