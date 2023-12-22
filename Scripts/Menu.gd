@@ -7,6 +7,7 @@ extends Control
 var songsListIndex : int = 0
 var selectedSongPath : String = ""
 var beatmapPath : String = ""
+var prevSongIndex : int = -1
 
 
 # Called when the node enters the scene tree for the first time.
@@ -93,11 +94,11 @@ func set_selected_beatmap() -> void:
 	BeatmapManager.set_beatmap(songDirPath)
 
 ## Function to set the selected song on double click
-func set_selected_song(index: int) -> void:
-	if not songPickTimer.is_stopped() and index == songsListIndex:
+func set_selected_song() -> void:
+	if not songPickTimer.is_stopped() and prevSongIndex == songsListIndex:
 		play_game()
 	
-	songPickTimer.start()
+	
 
 func play_game() -> void:
 	SoundManager.stop_current_audio()
@@ -107,21 +108,22 @@ func play_game() -> void:
 	self.hide()
 
 
-func _on_songs_list_item_selected(index):
-	if index == songsListIndex:
-		return
-	songsListIndex = index
-	set_selected_song_path()
-	set_selected_bg()
-	set_selected_beatmap()
-
-
-
 func _on_play_button_pressed():
 	#var scene = load("res://Scenes/Testing/NaixTestScenes/TestMultiplayerScene.tscn").instantiate()
 	play_game()
 	#self.queue_free()
 
-
 func _on_songs_list_item_clicked(index, at_position, mouse_button_index):
-	set_selected_song(index)
+	songPickTimer.start()
+	prevSongIndex = songsListIndex
+	songsListIndex = index
+	
+	if prevSongIndex == songsListIndex:
+		set_selected_song()
+		return
+		
+	set_selected_song_path()
+	set_selected_bg()
+	set_selected_beatmap()
+	
+
