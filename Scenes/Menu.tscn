@@ -67,5 +67,12 @@ grow_horizontal = 2
 grow_vertical = 2
 text = "PLAY"
 
+[node name="Timers" type="Node" parent="."]
+
+[node name="SongPickTimer" type="Timer" parent="Timers"]
+wait_time = 0.5
+one_shot = true
+
+[connection signal="item_clicked" from="SongsList" to="." method="_on_songs_list_item_clicked"]
 [connection signal="item_selected" from="SongsList" to="." method="_on_songs_list_item_selected"]
 [connection signal="pressed" from="PlayButton" to="." method="_on_play_button_pressed"]
